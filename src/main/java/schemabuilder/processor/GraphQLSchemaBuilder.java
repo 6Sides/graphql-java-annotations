@@ -10,7 +10,7 @@ import schemabuilder.processor.wiring.GraphQLWiringBuilder;
 /**
  * A class that builds {@link GraphQLSchema} objects
  */
-class GraphQLSchemaBuilder {
+public class GraphQLSchemaBuilder {
 
     private final GraphQLWiringBuilder builder;
     private final SchemaParser schemaParser;
