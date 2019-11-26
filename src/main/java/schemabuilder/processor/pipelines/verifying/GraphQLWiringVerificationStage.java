@@ -9,7 +9,7 @@ import schemabuilder.processor.pipelines.parsing.ParsedGraphQLData;
  */
 public abstract class GraphQLWiringVerificationStage {
 
-    protected static String issues = "";
+    static String issues = "";
 
     private GraphQLWiringVerificationStage next;
 
@@ -34,9 +34,9 @@ public abstract class GraphQLWiringVerificationStage {
      * Runs check on the next object in chain or ends traversing if we're in
      * last object in chain.
      */
-    protected void handleNext(ParsedGraphQLData data) {
+    void handleNext(ParsedGraphQLData data) {
         if (next == null) {
-            if (!this.issues.equals("")) {
+            if (!issues.equals("")) {
                 throw new InvalidSchemaException(issues);
             }
             return;

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-public class PackageScanner {
+class PackageScanner {
 
     private final String basePackage;
 
@@ -52,12 +52,13 @@ public class PackageScanner {
      * @throws ClassNotFoundException
      */
     private List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
-        List<Class<?>> classes = new ArrayList();
+        List<Class<?>> classes = new ArrayList<>();
         if (!directory.exists()) {
             return classes;
         }
 
         File[] files = directory.listFiles();
+        assert files != null;
         for (File file : files) {
             if (file.isDirectory()) {
                 assert !file.getName().contains(".");

@@ -76,7 +76,7 @@ public class BuildTypeWirings extends GraphQLWiringBuilderStage {
             result.add(builder);
         }
 
-        result.forEach(wiring -> builder.type(wiring));
+        result.forEach(builder::type);
 
         return handleNext(data);
     }

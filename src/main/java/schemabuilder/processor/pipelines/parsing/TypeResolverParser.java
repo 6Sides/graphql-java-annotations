@@ -17,7 +17,7 @@ public class TypeResolverParser extends GraphQLWiringParserStage {
 
         String typeName = clazz.getAnnotation(GraphQLTypeResolver.class).value();
 
-        Object instance = this.fetcher.getInstance(clazz);
+        Object instance = fetcher.getInstance(clazz);
 
         MappingContainer<TypeResolver> container = new MappingContainer<>();
         container.clazz = clazz;

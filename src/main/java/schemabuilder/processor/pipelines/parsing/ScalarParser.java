@@ -14,7 +14,7 @@ public class ScalarParser extends GraphQLWiringParserStage {
             return;
         }
 
-        Object instance = this.fetcher.getInstance(clazz);
+        Object instance = fetcher.getInstance(clazz);
 
         for(Method method : clazz.getDeclaredMethods()) {
             GraphQLScalar annotation = method.getAnnotation(GraphQLScalar.class);

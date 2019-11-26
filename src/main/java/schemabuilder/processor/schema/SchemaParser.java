@@ -4,10 +4,10 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * A class that parses a directory for graphql schema definition
@@ -27,7 +27,7 @@ public class SchemaParser {
      * @param directory The directory to check for .graphqls files. Note that the
      *                  parser will only check for directories in the `resources` folder.
      */
-    public SchemaParser(String directory) {
+    private SchemaParser(String directory) {
         this(directory, defaultSchemaFileExtension);
     }
 
@@ -55,6 +55,7 @@ public class SchemaParser {
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource(this.directory);
+        assert url != null;
         String path = url.getPath();
         buildRegistryRecursively(typeRegistry, new File(path));
 
@@ -69,13 +70,13 @@ public class SchemaParser {
      * @throws IOException
      */
     private void buildRegistryRecursively(TypeDefinitionRegistry registry, File directory) throws IOException {
-        for(File file : directory.listFiles()) {
+        for(File file : Objects.requireNonNull(directory.listFiles())) {
             if(file.isDirectory()) {
                 buildRegistryRecursively(registry, file);
                 continue;
             }
 
-            if(!file.getName().substring(file.getName().indexOf(".") + 1).equalsIgnoreCase("graphqls")) {
+            if(!file.getName().substring(file.getName().indexOf(".") + 1).equalsIgnoreCase(schemaFileExtension)) {
                 continue;
             }
 
@@ -87,7 +88,7 @@ public class SchemaParser {
 
             String pathName = file.getPath().substring(file.getPath().indexOf(schemaDirectory) + 1);
             URL url = this.getResource(pathName);
-            String fileContents = this.readFile(url.getPath(), StandardCharsets.US_ASCII);
+            String fileContents = this.readFile(url.getPath());
 
             TypeDefinitionRegistry contents = new graphql.schema.idl.SchemaParser().parse(fileContents);
 
@@ -134,12 +135,11 @@ public class SchemaParser {
     /**
      * Reads a file and returns its contents as a String
      * @param path The path to the file
-     * @param encoding The encoding to use
      * @return The contents of the file
      * @throws IOException Thrown if the file cannot be read
      */
-    private String readFile(String path, Charset encoding) throws IOException {
+    private String readFile(String path) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
-        return new String(encoded, encoding);
+        return new String(encoded, StandardCharsets.US_ASCII);
     }
 }

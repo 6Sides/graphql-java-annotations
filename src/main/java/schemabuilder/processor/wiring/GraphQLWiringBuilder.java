@@ -48,7 +48,7 @@ public class GraphQLWiringBuilder {
      * Create a GraphQLWiringBuilder with options
      * @param options
      */
-    public GraphQLWiringBuilder(GraphQLWiringBuilderOptions options) {
+    private GraphQLWiringBuilder(GraphQLWiringBuilderOptions options) {
         this.basePackage = options.getBasePackage();
         this.fetcher = options.getInstanceFetcher();
         this.shouldPrintHierarchy = options.shouldPrintHierarchy();
@@ -59,7 +59,7 @@ public class GraphQLWiringBuilder {
      * @return
      * @throws Exception
      */
-    public RuntimeWiring.Builder getRuntimeWiringBuilder() throws Exception {
+    private RuntimeWiring.Builder getRuntimeWiringBuilder() throws Exception {
         if (builder != null) {
             return builder;
         }
@@ -72,7 +72,7 @@ public class GraphQLWiringBuilder {
                 .linkWith(new TypeResolverParser())
                 .linkWith(new ScalarParser());
 
-        ParsedGraphQLData data = head.kickoff(scanner.getClasses());
+        ParsedGraphQLData data = head.kickoff(scanner.getClasses(), fetcher);
 
         GraphQLWiringVerificationStage headVerify = new CheckDirectives();
         headVerify.linkWith(new CheckScalars())

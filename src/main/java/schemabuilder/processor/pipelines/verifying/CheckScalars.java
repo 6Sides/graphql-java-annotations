@@ -36,9 +36,10 @@ public class CheckScalars extends GraphQLWiringVerificationStage {
             if(implementations.size() > 1) {
                 foundIssue = true;
 
-                sb.append("Multiple definitions of the *** " + scalarName + " *** scalar type:\n");
+                sb.append("Multiple definitions of the *** ").append(scalarName)
+                        .append(" *** scalar type:\n");
                 for(String className : implementations) {
-                    sb.append("\t" + className + "\n");
+                    sb.append("\t").append(className).append("\n");
                 }
             }
         }

@@ -24,10 +24,12 @@ public class CheckTypeWirings extends GraphQLWiringVerificationStage {
                     foundIssue = true;
 
                     String path = typeName + "->" + fieldName;
-                    sb.append("Multiple definitions of the *** " + path + " *** data fetcher:\n");
+                    sb.append("Multiple definitions of the *** ").append(path)
+                            .append(" *** data fetcher:\n");
 
                     for(MappingContainer<DataFetcher<?>> container : fetchers) {
-                        sb.append("\t" + container.clazz.getTypeName() + "#" + container.methodName + "\n");
+                        sb.append("\t").append(container.clazz.getTypeName()).append("#")
+                                .append(container.methodName).append("\n");
                     }
                 }
             }

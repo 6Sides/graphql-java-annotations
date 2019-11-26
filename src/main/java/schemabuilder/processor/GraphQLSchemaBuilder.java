@@ -10,7 +10,7 @@ import schemabuilder.processor.wiring.GraphQLWiringBuilder;
 /**
  * A class that builds {@link GraphQLSchema} objects
  */
-public class GraphQLSchemaBuilder {
+class GraphQLSchemaBuilder {
 
     private final GraphQLWiringBuilder builder;
     private final SchemaParser schemaParser;
@@ -38,7 +38,8 @@ public class GraphQLSchemaBuilder {
      * @param schemaParser The {@link SchemaParser} to use.
      * @param builder The {@link GraphQLWiringBuilder} to use.
      */
-    public GraphQLSchemaBuilder(final SchemaParser schemaParser, final GraphQLWiringBuilder builder) {
+    private GraphQLSchemaBuilder(final SchemaParser schemaParser,
+            final GraphQLWiringBuilder builder) {
         this.schemaParser = schemaParser;
         this.builder = builder;
     }

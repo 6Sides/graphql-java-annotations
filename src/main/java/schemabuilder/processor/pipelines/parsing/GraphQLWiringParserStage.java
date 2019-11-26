@@ -10,8 +10,8 @@ import schemabuilder.processor.wiring.InstanceFetcher;
  */
 public abstract class GraphQLWiringParserStage {
 
-    protected static InstanceFetcher fetcher;
-    protected static ParsedGraphQLData parsedResults = new ParsedGraphQLData();
+    static InstanceFetcher fetcher;
+    static final ParsedGraphQLData parsedResults = new ParsedGraphQLData();
 
     private GraphQLWiringParserStage next;
 
@@ -44,7 +44,7 @@ public abstract class GraphQLWiringParserStage {
      * Runs check on the next object in chain or ends traversing if we're in
      * last object in chain.
      */
-    protected void handleNext(Class<?> clazz) {
+    void handleNext(Class<?> clazz) {
         if (next == null) {
             return;
         }

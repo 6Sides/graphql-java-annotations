@@ -20,10 +20,11 @@ public class CheckTypeResolvers extends GraphQLWiringVerificationStage {
             if(resolvers.size() > 1) {
                 foundIssue = true;
 
-                sb.append("Multiple definitions of the *** " + typeName + " *** type resolver:\n");
+                sb.append("Multiple definitions of the *** ").append(typeName)
+                        .append(" *** type resolver:\n");
 
                 for(MappingContainer<TypeResolver> container : resolvers) {
-                    sb.append("\t" + container.clazz.getTypeName() + "\n");
+                    sb.append("\t").append(container.clazz.getTypeName()).append("\n");
                 }
             }
         }

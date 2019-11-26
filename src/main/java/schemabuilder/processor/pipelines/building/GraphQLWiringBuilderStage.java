@@ -9,7 +9,7 @@ import schemabuilder.processor.pipelines.parsing.ParsedGraphQLData;
  */
 public abstract class GraphQLWiringBuilderStage {
 
-    protected static RuntimeWiring.Builder builder = RuntimeWiring.newRuntimeWiring();
+    static final RuntimeWiring.Builder builder = RuntimeWiring.newRuntimeWiring();
     private boolean shouldPrintDebug = false;
 
     private GraphQLWiringBuilderStage next;
@@ -36,14 +36,14 @@ public abstract class GraphQLWiringBuilderStage {
      * Runs check on the next object in chain or ends traversing if we're in
      * last object in chain.
      */
-    protected RuntimeWiring.Builder handleNext(ParsedGraphQLData data) {
+    RuntimeWiring.Builder handleNext(ParsedGraphQLData data) {
         if (next == null) {
             return builder;
         }
         return next.handle(data);
     }
 
-    protected void printIfNecessary(String text) {
+    void printIfNecessary(String text) {
         if(!this.shouldPrintDebug) {
             return;
         }

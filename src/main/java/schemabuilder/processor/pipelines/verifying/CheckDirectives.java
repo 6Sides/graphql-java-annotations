@@ -20,10 +20,11 @@ public class CheckDirectives extends GraphQLWiringVerificationStage {
             if(directiveImpls.size() > 1) {
                 foundIssue = true;
 
-                sb.append("Multiple definitions of the *** " + directiveName + " *** directive:\n");
+                sb.append("Multiple definitions of the *** ").append(directiveName)
+                        .append(" *** directive:\n");
 
                 for(MappingContainer<SchemaDirectiveWiring> container : directiveImpls) {
-                    sb.append("\t" + container.clazz.getTypeName() + "\n");
+                    sb.append("\t").append(container.clazz.getTypeName()).append("\n");
                 }
             }
         }
