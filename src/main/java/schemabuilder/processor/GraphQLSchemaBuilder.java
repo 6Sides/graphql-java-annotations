@@ -38,7 +38,7 @@ public class GraphQLSchemaBuilder {
      * @param schemaParser The {@link SchemaParser} to use.
      * @param builder The {@link GraphQLWiringBuilder} to use.
      */
-    private GraphQLSchemaBuilder(final SchemaParser schemaParser,
+    public GraphQLSchemaBuilder(final SchemaParser schemaParser,
             final GraphQLWiringBuilder builder) {
         this.schemaParser = schemaParser;
         this.builder = builder;
