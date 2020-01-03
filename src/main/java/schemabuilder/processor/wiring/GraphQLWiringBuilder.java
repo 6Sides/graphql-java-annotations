@@ -64,8 +64,6 @@ public class GraphQLWiringBuilder {
             return builder;
         }
 
-        System.out.println("Building wiring");
-
         PackageScanner scanner = new PackageScanner(basePackage);
 
         GraphQLWiringParserStage head = new FilterInterfaces();

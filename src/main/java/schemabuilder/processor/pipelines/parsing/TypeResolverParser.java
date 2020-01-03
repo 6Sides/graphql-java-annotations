@@ -11,17 +11,12 @@ public class TypeResolverParser extends GraphQLWiringParserStage {
 
     @Override
     public void handle(Class<?> clazz) {
-        System.out.println("Scanning for type resolver!");
         if (!clazz.isAnnotationPresent(GraphQLTypeResolver.class)) {
             handleNext(clazz);
             return;
         }
 
-        System.out.println("Found type resolver!");
-
         String typeName = clazz.getAnnotation(GraphQLTypeResolver.class).value();
-
-        System.out.println(typeName);
 
         Object instance = fetcher.getInstance(clazz);
 
