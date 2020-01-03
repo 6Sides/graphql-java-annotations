@@ -12,7 +12,7 @@ public class DirectiveParser extends GraphQLWiringParserStage {
     @Override
     public void handle(Class<?> clazz) {
         if (!clazz.isAnnotationPresent(GraphQLDirective.class)) {
-            return;
+            handleNext(clazz);
         }
 
         String typeName = clazz.getAnnotation(GraphQLDirective.class).value();
