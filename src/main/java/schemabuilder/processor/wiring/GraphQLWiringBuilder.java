@@ -48,7 +48,7 @@ public class GraphQLWiringBuilder {
      * Create a GraphQLWiringBuilder with options
      * @param options
      */
-    private GraphQLWiringBuilder(GraphQLWiringBuilderOptions options) {
+    public GraphQLWiringBuilder(GraphQLWiringBuilderOptions options) {
         this.basePackage = options.getBasePackage();
         this.fetcher = options.getInstanceFetcher();
         this.shouldPrintHierarchy = options.shouldPrintHierarchy();
