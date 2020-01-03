@@ -12,6 +12,7 @@ public class ScalarParser extends GraphQLWiringParserStage {
     public void handle(Class<?> clazz) {
         if (!clazz.isAnnotationPresent(GraphQLScalar.class)) {
             handleNext(clazz);
+            return;
         }
 
         Object instance = fetcher.getInstance(clazz);

@@ -17,6 +17,7 @@ public class TypeConfigurationParser extends GraphQLWiringParserStage {
     public void handle(Class<?> clazz) {
         if (!clazz.isAnnotationPresent(GraphQLTypeConfiguration.class)) {
             handleNext(clazz);
+            return;
         }
 
         String typeName = clazz.getAnnotation(GraphQLTypeConfiguration.class).value();
