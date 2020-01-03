@@ -67,11 +67,17 @@ public class BuildTypeWirings extends GraphQLWiringBuilderStage {
             result.add(builder);
         }
 
+        this.printIfNecessary("Type Resolvers:");
+
         for(String typeName : typeResolverMap.keySet()) {
             TypeRuntimeWiring.Builder builder = new TypeRuntimeWiring.Builder()
                     .typeName(typeName);
 
+            this.printIfNecessary("\u2514\u2500" + typeName);
+
             builder.typeResolver(typeResolverMap.get(typeName));
+
+            this.printIfNecessary("");
 
             result.add(builder);
         }
