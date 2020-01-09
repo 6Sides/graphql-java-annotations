@@ -1,5 +1,6 @@
 package schemabuilder.processor.wiring;
 
+import com.google.common.reflect.ClassPath;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -19,25 +20,19 @@ class PackageScanner {
      * Scans all classes accessible from the context class loader which belong to the given package and subpackages.
      *
      * @return The classes
-     * @throws ClassNotFoundException
      * @throws IOException
      */
-    final List<Class<?>> getClasses() throws ClassNotFoundException, IOException {
+    final List<Class<?>> getClasses() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
 
-        String path = this.basePackage.replace('.', '/');
-        Enumeration<URL> resources = classLoader.getResources(path);
-        List<File> dirs = new ArrayList<>();
-
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
-            dirs.add(new File(resource.getFile()));
-        }
-
         ArrayList<Class<?>> classes = new ArrayList<>();
-        for (File directory : dirs) {
-            classes.addAll(findClasses(directory, this.basePackage));
+
+        ClassPath cp = ClassPath.from(Thread.currentThread().getContextClassLoader());
+        for(ClassPath.ClassInfo info : cp.getTopLevelClassesRecursive(this.basePackage)) {
+            try {
+                classes.add(info.load());
+            } catch (Throwable e) {}
         }
 
         return classes;
@@ -51,6 +46,7 @@ class PackageScanner {
      * @return The classes
      * @throws ClassNotFoundException
      */
+    @Deprecated
     private List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
         List<Class<?>> classes = new ArrayList<>();
         if (!directory.exists()) {
