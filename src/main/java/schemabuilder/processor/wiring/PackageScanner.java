@@ -1,6 +1,7 @@
 package schemabuilder.processor.wiring;
 
 import com.google.common.reflect.ClassPath;
+import com.google.common.reflect.ClassPath.ResourceInfo;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -38,15 +39,14 @@ class PackageScanner {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
 
-        // ArrayList<Class<?>> classes = new ArrayList<>();
-
-        Reflections reflections = new Reflections("");
+        /* Reflections reflections = new Reflections("");
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(GraphQLSchemaConfiguration.class);
         annotated.forEach(System.out::println);
-        List<Class<?>> result =  new ArrayList<>(annotated);
+        List<Class<?>> result =  new ArrayList<>(annotated);*/
 
-        return result;
-/*
+
+        ArrayList<Class<?>> classes = new ArrayList<>();
+
         ClassPath cp = ClassPath.from(Thread.currentThread().getContextClassLoader());
         for(ClassPath.ClassInfo info : cp.getTopLevelClassesRecursive(this.basePackage)) {
             try {
@@ -55,8 +55,6 @@ class PackageScanner {
         }
 
         return classes;
-
- */
     }
 
     /**

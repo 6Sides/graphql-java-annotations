@@ -1,5 +1,7 @@
 package schemabuilder.processor.schema;
 
+import com.google.common.reflect.ClassPath;
+import com.google.common.reflect.ClassPath.ResourceInfo;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +57,7 @@ public class SchemaParser {
      *
      * @return A TypeDefinitionRegistry object constructed from the valid graphql schema definition files
      */
-    public TypeDefinitionRegistry getRegistry() {
+    public TypeDefinitionRegistry getRegistry() throws IOException {
         TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry();
 
         //ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -73,10 +75,29 @@ public class SchemaParser {
      * @param registry The context to merge .graphqls file schemas into
      * @param directory The root directory to search through
      */
-    private void buildRegistryRecursively(TypeDefinitionRegistry registry, File directory) {
-        Set<String> files = new Reflections("", new ResourcesScanner()).getResources(Pattern.compile(".*\\.graphqls"));
+    private void buildRegistryRecursively(TypeDefinitionRegistry registry, File directory)
+            throws IOException {
 
-        InputStream inputStream;
+        ClassPath cp = ClassPath.from(Thread.currentThread().getContextClassLoader());
+
+        for (ResourceInfo info : cp.getResources()) {
+            try {
+                if (info.getResourceName().contains(".graphqls")) {
+                    System.out.println(info.getResourceName());
+
+                    java.util.Scanner s = new java.util.Scanner(info.asByteSource().openBufferedStream()).useDelimiter("\\A");
+
+                    String fileContents = s.hasNext() ? s.next() : "";
+                    TypeDefinitionRegistry contents = new graphql.schema.idl.SchemaParser().parse(fileContents);
+
+                    registry.merge(contents);
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        /*InputStream inputStream;
         for (String path : files) {
             System.out.println(path);
             inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
@@ -86,7 +107,7 @@ public class SchemaParser {
             TypeDefinitionRegistry contents = new graphql.schema.idl.SchemaParser().parse(fileContents);
 
             registry.merge(contents);
-        }
+        }*/
 
         /*for(File file : Objects.requireNonNull(directory.listFiles())) {
             if(file.isDirectory()) {
