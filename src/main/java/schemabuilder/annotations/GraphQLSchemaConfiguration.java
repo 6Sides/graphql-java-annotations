@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@interface GraphQLSchemaConfiguration {
+public @interface GraphQLSchemaConfiguration {
 
 }

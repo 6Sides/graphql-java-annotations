@@ -29,7 +29,7 @@ public final class GraphQLWiringBuilderOptions {
     public static class Builder {
 
         private String basePackage = null;
-        private boolean printHierarchy = false;
+        private boolean printHierarchy = true;
         private InstanceFetcher instanceFetcher;
 
         public Builder() {}

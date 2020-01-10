@@ -78,6 +78,7 @@ public class SchemaParser {
 
         InputStream inputStream;
         for (String path : files) {
+            System.out.println(path);
             inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
             java.util.Scanner s = new java.util.Scanner(inputStream).useDelimiter("\\A");
 

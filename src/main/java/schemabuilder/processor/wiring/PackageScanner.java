@@ -6,7 +6,19 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+import org.reflections.Reflections;
+import org.reflections.scanners.FieldAnnotationsScanner;
+import org.reflections.scanners.MethodParameterScanner;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import schemabuilder.annotations.GraphQLSchemaConfiguration;
+import schemabuilder.annotations.GraphQLTypeConfiguration;
 
 class PackageScanner {
 
@@ -26,8 +38,15 @@ class PackageScanner {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
 
-        ArrayList<Class<?>> classes = new ArrayList<>();
+        // ArrayList<Class<?>> classes = new ArrayList<>();
 
+        Reflections reflections = new Reflections("");
+        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(GraphQLSchemaConfiguration.class);
+        annotated.forEach(System.out::println);
+        List<Class<?>> result =  new ArrayList<>(annotated);
+
+        return result;
+/*
         ClassPath cp = ClassPath.from(Thread.currentThread().getContextClassLoader());
         for(ClassPath.ClassInfo info : cp.getTopLevelClassesRecursive(this.basePackage)) {
             try {
@@ -36,6 +55,8 @@ class PackageScanner {
         }
 
         return classes;
+
+ */
     }
 
     /**
