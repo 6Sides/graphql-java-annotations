@@ -3,11 +3,17 @@ package schemabuilder.processor.schema;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.regex.Pattern;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
 
 /**
  * A class that parses a directory for graphql schema definition
@@ -45,12 +51,11 @@ public class SchemaParser {
     }
 
     /**
-     * Creates the TypeDefinitionRegistry from the .graphls files in the schema directory
+     * Creates the TypeDefinitionRegistry from the .graphqls files in the schema directory
      *
      * @return A TypeDefinitionRegistry object constructed from the valid graphql schema definition files
-     * @throws IOException
      */
-    public TypeDefinitionRegistry getRegistry() throws IOException {
+    public TypeDefinitionRegistry getRegistry() {
         TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry();
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -67,10 +72,24 @@ public class SchemaParser {
      *
      * @param registry The context to merge .graphqls file schemas into
      * @param directory The root directory to search through
-     * @throws IOException
      */
-    private void buildRegistryRecursively(TypeDefinitionRegistry registry, File directory) throws IOException {
-        for(File file : Objects.requireNonNull(directory.listFiles())) {
+    private void buildRegistryRecursively(TypeDefinitionRegistry registry, File directory) {
+        Set<String> files = new Reflections("", new ResourcesScanner()).getResources(Pattern.compile(".*\\.graphqls"));
+
+        files.forEach(System.out::println);
+
+        InputStream inputStream;
+        for (String path : files) {
+            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+            java.util.Scanner s = new java.util.Scanner(inputStream).useDelimiter("\\A");
+
+            String fileContents = s.hasNext() ? s.next() : "";
+            TypeDefinitionRegistry contents = new graphql.schema.idl.SchemaParser().parse(fileContents);
+
+            registry.merge(contents);
+        }
+
+        /*for(File file : Objects.requireNonNull(directory.listFiles())) {
             if(file.isDirectory()) {
                 buildRegistryRecursively(registry, file);
                 continue;
@@ -93,7 +112,7 @@ public class SchemaParser {
             TypeDefinitionRegistry contents = new graphql.schema.idl.SchemaParser().parse(fileContents);
 
             registry.merge(contents);
-        }
+        }*/
     }
 
     /**
