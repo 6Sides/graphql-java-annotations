@@ -48,8 +48,9 @@ class PackageScanner {
         ArrayList<Class<?>> classes = new ArrayList<>();
 
         ClassPath cp = ClassPath.from(Thread.currentThread().getContextClassLoader());
-        for(ClassPath.ClassInfo info : cp.getTopLevelClassesRecursive(this.basePackage)) {
+        for(ClassPath.ClassInfo info : cp.getAllClasses()) {
             try {
+                System.out.println(info.getSimpleName());
                 classes.add(info.load());
             } catch (Throwable e) {}
         }
