@@ -76,8 +76,6 @@ public class SchemaParser {
     private void buildRegistryRecursively(TypeDefinitionRegistry registry, File directory) {
         Set<String> files = new Reflections("", new ResourcesScanner()).getResources(Pattern.compile(".*\\.graphqls"));
 
-        files.forEach(System.out::println);
-
         InputStream inputStream;
         for (String path : files) {
             inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
