@@ -58,9 +58,9 @@ public class SchemaParser {
     public TypeDefinitionRegistry getRegistry() {
         TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry();
 
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        URL url = loader.getResource(this.directory);
-        assert url != null;
+        //ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        //URL url = loader.getResource(this.directory);
+        //assert url != null;
         //String path = url.getPath();
         buildRegistryRecursively(typeRegistry, null);
 
