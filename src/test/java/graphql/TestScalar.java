@@ -1,6 +1,6 @@
 package graphql;
 
-import schemabuilder.annotations.GraphQLSchemaConfiguration;
+import schemabuilder.annotations.graphql.GraphQLSchemaConfiguration;
 
 @GraphQLSchemaConfiguration
 public class TestScalar {

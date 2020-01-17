@@ -3,7 +3,7 @@ package schemabuilder.processor.pipelines.parsing;
 import graphql.schema.GraphQLScalarType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import schemabuilder.annotations.GraphQLScalar;
+import schemabuilder.annotations.graphql.GraphQLScalar;
 import schemabuilder.processor.wiring.MappingContainer;
 
 public class ScalarParser extends GraphQLWiringParserStage {

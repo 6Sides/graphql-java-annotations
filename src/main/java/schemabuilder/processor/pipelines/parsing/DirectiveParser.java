@@ -4,7 +4,7 @@ import graphql.schema.idl.SchemaDirectiveWiring;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import schemabuilder.annotations.GraphQLDirective;
+import schemabuilder.annotations.graphql.GraphQLDirective;
 import schemabuilder.processor.wiring.MappingContainer;
 
 public class DirectiveParser extends GraphQLWiringParserStage {

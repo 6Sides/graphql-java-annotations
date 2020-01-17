@@ -96,43 +96,6 @@ public class SchemaParser {
                 e.printStackTrace();
             }
         }
-
-        /*InputStream inputStream;
-        for (String path : files) {
-            System.out.println(path);
-            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
-            java.util.Scanner s = new java.util.Scanner(inputStream).useDelimiter("\\A");
-
-            String fileContents = s.hasNext() ? s.next() : "";
-            TypeDefinitionRegistry contents = new graphql.schema.idl.SchemaParser().parse(fileContents);
-
-            registry.merge(contents);
-        }*/
-
-        /*for(File file : Objects.requireNonNull(directory.listFiles())) {
-            if(file.isDirectory()) {
-                buildRegistryRecursively(registry, file);
-                continue;
-            }
-
-            if(!file.getName().substring(file.getName().indexOf(".") + 1).equalsIgnoreCase(schemaFileExtension)) {
-                continue;
-            }
-
-            // For windows file system
-            String schemaDirectory = "/" + this.directory;
-            if(System.getProperty("os.name").toLowerCase().contains("win")) {
-                schemaDirectory = "\\" + this.directory;
-            }
-
-            String pathName = file.getPath().substring(file.getPath().indexOf(schemaDirectory) + 1);
-            URL url = this.getResource(pathName);
-            String fileContents = this.readFile(url.getPath());
-
-            TypeDefinitionRegistry contents = new graphql.schema.idl.SchemaParser().parse(fileContents);
-
-            registry.merge(contents);
-        }*/
     }
 
     /**

@@ -1,4 +1,4 @@
-package schemabuilder.annotations;
+package schemabuilder.annotations.graphql;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,10 +10,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @GraphQLSchemaConfiguration
-public @interface GraphQLTypeConfiguration {
+public @interface GraphQLTypeResolver {
 
     /**
-     * The graphql type name to associate datafetchers with.
+     * The name of the type to associate the type resolver with
+     *
      * @return
      */
     String value();

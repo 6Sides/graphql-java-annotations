@@ -1,4 +1,4 @@
-package schemabuilder.annotations;
+package schemabuilder.annotations.graphql;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

@@ -4,7 +4,7 @@ import graphql.schema.TypeResolver;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import schemabuilder.annotations.GraphQLTypeResolver;
+import schemabuilder.annotations.graphql.GraphQLTypeResolver;
 import schemabuilder.processor.wiring.MappingContainer;
 
 public class TypeResolverParser extends GraphQLWiringParserStage {

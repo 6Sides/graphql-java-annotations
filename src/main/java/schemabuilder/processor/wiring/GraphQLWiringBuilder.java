@@ -1,6 +1,9 @@
 package schemabuilder.processor.wiring;
 
 import graphql.schema.idl.RuntimeWiring;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import schemabuilder.processor.pipelines.building.BuildDirectives;
 import schemabuilder.processor.pipelines.building.BuildScalars;
 import schemabuilder.processor.pipelines.building.BuildTypeWirings;
@@ -72,7 +75,11 @@ public class GraphQLWiringBuilder {
                 .linkWith(new TypeResolverParser())
                 .linkWith(new ScalarParser());
 
-        ParsedGraphQLData data = head.kickoff(scanner.getClasses(), fetcher);
+        List<Class<?>> clazzes = scanner.getClasses();
+        clazzes.addAll(this.clazzes);
+        clazzes = clazzes.stream().distinct().collect(Collectors.toList());
+
+        ParsedGraphQLData data = head.kickoff(clazzes, fetcher);
 
         GraphQLWiringVerificationStage headVerify = new CheckDirectives();
         headVerify.linkWith(new CheckScalars())
@@ -86,6 +93,11 @@ public class GraphQLWiringBuilder {
                 .linkWith(new BuildDirectives());
 
         return headBuilder.kickoff(data, this.shouldPrintHierarchy);
+    }
+
+    private List<Class<?>> clazzes = new ArrayList<>();
+    public void addClass(Class<?> clazz) {
+        clazzes.add(clazz);
     }
 
     /**

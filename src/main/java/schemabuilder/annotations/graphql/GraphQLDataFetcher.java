@@ -1,4 +1,4 @@
-package schemabuilder.annotations;
+package schemabuilder.annotations.graphql;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -7,16 +7,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@GraphQLSchemaConfiguration
-public @interface GraphQLTypeResolver {
+public @interface GraphQLDataFetcher {
 
     /**
-     * The name of the type to associate the type resolver with
+     * The field name to be associated with the DataFetcher.
+     * If none is provided the name of the method is used.
      *
      * @return
      */
-    String value();
+    String value() default "";
 
 }

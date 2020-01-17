@@ -1,8 +1,8 @@
 package graphql;
 
 import graphql.schema.DataFetcher;
-import schemabuilder.annotations.GraphQLDataFetcher;
-import schemabuilder.annotations.GraphQLTypeConfiguration;
+import schemabuilder.annotations.graphql.GraphQLDataFetcher;
+import schemabuilder.annotations.graphql.GraphQLTypeConfiguration;
 
 @GraphQLTypeConfiguration("Query")
 public class Query {

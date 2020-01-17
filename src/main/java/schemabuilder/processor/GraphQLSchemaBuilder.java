@@ -44,6 +44,10 @@ public class GraphQLSchemaBuilder {
         this.builder = builder;
     }
 
+    public void addClass(Class<?> clazz) {
+        this.builder.addClass(clazz);
+    }
+
     /**
      * TODO: Make exceptions more explicit and well defined
      *

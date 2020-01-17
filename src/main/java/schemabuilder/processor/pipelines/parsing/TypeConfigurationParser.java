@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import schemabuilder.annotations.GraphQLDataFetcher;
-import schemabuilder.annotations.GraphQLTypeConfiguration;
+import schemabuilder.annotations.graphql.GraphQLDataFetcher;
+import schemabuilder.annotations.graphql.GraphQLTypeConfiguration;
 import schemabuilder.processor.wiring.MappingContainer;
 
 public class TypeConfigurationParser extends GraphQLWiringParserStage {
