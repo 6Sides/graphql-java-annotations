@@ -4,13 +4,14 @@ import graphql.schema.GraphQLScalarType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import schemabuilder.annotations.graphql.GraphQLScalar;
+import schemabuilder.annotations.graphql.GraphQLSchemaConfiguration;
 import schemabuilder.processor.wiring.MappingContainer;
 
 public class ScalarParser extends GraphQLWiringParserStage {
 
     @Override
     public void handle(Class<?> clazz) {
-        if (!clazz.isAnnotationPresent(GraphQLScalar.class)) {
+        if (!clazz.isAnnotationPresent(GraphQLSchemaConfiguration.class)) {
             handleNext(clazz);
             return;
         }
