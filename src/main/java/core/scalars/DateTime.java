@@ -12,7 +12,7 @@ import schemabuilder.annotations.graphql.GraphQLScalar;
 import schemabuilder.annotations.graphql.GraphQLSchemaConfiguration;
 
 @GraphQLSchemaConfiguration
-public class DateTimeScalar {
+public class DateTime {
 
     @GraphQLScalar("DateTime")
     public static GraphQLScalarType getDateTimeScalar() {

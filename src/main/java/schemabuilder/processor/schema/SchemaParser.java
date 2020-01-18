@@ -5,17 +5,6 @@ import com.google.common.reflect.ClassPath.ResourceInfo;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.regex.Pattern;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
 
 /**
  * A class that parses a directory for graphql schema definition

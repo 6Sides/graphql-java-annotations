@@ -1,9 +1,9 @@
 package core;
 
-import core.scalars.DateTimeScalar;
+import core.scalars.DateTime;
 
 public class GraphQLScalars {
 
-    public static final Class DATE_TIME = DateTimeScalar.class;
+    public static final Class DATE_TIME = DateTime.class;
 
 }

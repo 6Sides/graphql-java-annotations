@@ -16,9 +16,9 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
+    // GraphQL Java
     compile 'com.graphql-java:graphql-java:11.0'
 
+    // Google Guava for reflection
     implementation("com.google.guava:guava:28.2-jre")
-
-    compile 'org.reflections:reflections:0.9.12'
 }
