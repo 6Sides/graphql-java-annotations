@@ -24,12 +24,12 @@ public class WiringBuilder {
     private GraphQLTypeResolverBank typeResolvers = GraphQLTypeResolverBank.getInstance();
 
 
-    public static WiringBuilder withClasses(Set<Class<?>> clazzes) {
-        return new WiringBuilder(clazzes);
+    public static WiringBuilder withOptions(String basePackage, Set<Class<?>> clazzes) {
+        return new WiringBuilder(basePackage, clazzes);
     }
 
-    private WiringBuilder(Set<Class<?>> clazzes) {
-        new GraphQLClassParser(null, clazzes).parseClasses();
+    private WiringBuilder(String basePackage, Set<Class<?>> clazzes) {
+        new GraphQLClassParser(basePackage, clazzes).parseClasses();
     }
 
 

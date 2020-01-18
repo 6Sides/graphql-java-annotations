@@ -49,7 +49,7 @@ public class SchemaParser {
      */
     public SchemaParser(String directory, String schemaFileExtension) {
         this.directory = directory;
-        this.schemaFileExtension = schemaFileExtension;
+        this.schemaFileExtension = String.format(".%s", schemaFileExtension);
     }
 
     /**
@@ -78,7 +78,7 @@ public class SchemaParser {
 
         for (ResourceInfo info : cp.getResources()) {
             try {
-                if (info.getResourceName().contains(".graphqls")) {
+                if (info.getResourceName().contains(this.schemaFileExtension)) {
                     System.out.println(info.getResourceName());
 
                     java.util.Scanner s = new java.util.Scanner(info.asByteSource().openBufferedStream()).useDelimiter("\\A");

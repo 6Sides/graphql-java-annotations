@@ -43,11 +43,15 @@ public class GraphQLClassParser {
 
     public void parseClasses() {
         try {
-            List<Class<?>> classes = new PackageScanner("graphql").getClasses();
+            List<Class<?>> classes = new PackageScanner(this.basePackage).getClasses();
             classes.addAll(this.additionalClasses);
             classes = classes.stream().distinct().collect(Collectors.toList());
 
             for (Class<?> clazz : classes) {
+                if (clazz.isInterface() || clazz.isAnnotation()) {
+                    continue;
+                }
+
                 for (GraphQLClassParserStrategy strategy : strategies) {
                     strategy.parse(clazz, this.instanceFetcher);
                 }

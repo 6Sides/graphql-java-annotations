@@ -1,4 +1,4 @@
-package graphql;
+package core.scalars;
 
 import graphql.language.IntValue;
 import graphql.schema.Coercing;
