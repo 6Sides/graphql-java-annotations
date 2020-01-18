@@ -4,15 +4,15 @@ import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import schemabuilder.processor.pipelines.building.WiringBuilder;
 import schemabuilder.processor.schema.SchemaParser;
-import schemabuilder.processor.wiring.GraphQLWiringBuilder;
 
 /**
  * A class that builds {@link GraphQLSchema} objects
  */
 public class GraphQLSchemaBuilder {
 
-    private final GraphQLWiringBuilder builder;
+    private final WiringBuilder builder;
     private final SchemaParser schemaParser;
 
     /**
@@ -27,8 +27,7 @@ public class GraphQLSchemaBuilder {
      */
     public GraphQLSchemaBuilder(String schemaDirectory, String schemaFileExtension, String basePackage) {
         this(
-                new SchemaParser(schemaDirectory, schemaFileExtension),
-                new GraphQLWiringBuilder(basePackage)
+                new SchemaParser(schemaDirectory, schemaFileExtension)
         );
     }
 
@@ -38,15 +37,14 @@ public class GraphQLSchemaBuilder {
      * @param schemaParser The {@link SchemaParser} to use.
      * @param builder The {@link GraphQLWiringBuilder} to use.
      */
-    public GraphQLSchemaBuilder(final SchemaParser schemaParser,
-            final GraphQLWiringBuilder builder) {
+    public GraphQLSchemaBuilder(final SchemaParser schemaParser) {
         this.schemaParser = schemaParser;
-        this.builder = builder;
+        this.builder = new WiringBuilder();
     }
 
-    public void addClass(Class<?> clazz) {
+    /*public void addClass(Class<?> clazz) {
         this.builder.addClass(clazz);
-    }
+    }*/
 
     /**
      * TODO: Make exceptions more explicit and well defined
@@ -58,7 +56,7 @@ public class GraphQLSchemaBuilder {
      */
     public GraphQLSchema getSchema() throws Exception {
         TypeDefinitionRegistry typeRegistry = schemaParser.getRegistry();
-        RuntimeWiring runtimeWiring = builder.getRuntimeWiring();
+        RuntimeWiring runtimeWiring = builder.buildWiring().build();
 
         SchemaGenerator schemaGenerator = new SchemaGenerator();
         return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);

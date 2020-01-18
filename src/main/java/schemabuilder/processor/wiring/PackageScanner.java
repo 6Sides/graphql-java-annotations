@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-class PackageScanner {
+public class PackageScanner {
 
     private final String basePackage;
 
-    PackageScanner(String packageName) {
+    public PackageScanner(String packageName) {
         this.basePackage = packageName;
     }
 
@@ -20,7 +20,7 @@ class PackageScanner {
      * @return The classes
      * @throws IOException
      */
-    final List<Class<?>> getClasses() throws IOException {
+    public final List<Class<?>> getClasses() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
 

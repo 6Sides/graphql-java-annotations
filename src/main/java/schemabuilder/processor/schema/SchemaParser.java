@@ -60,10 +60,6 @@ public class SchemaParser {
     public TypeDefinitionRegistry getRegistry() throws IOException {
         TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry();
 
-        //ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        //URL url = loader.getResource(this.directory);
-        //assert url != null;
-        //String path = url.getPath();
         buildRegistryRecursively(typeRegistry, null);
 
         return typeRegistry;
@@ -96,52 +92,5 @@ public class SchemaParser {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Load a resource given its name
-     * @param resourceName The name of the resource
-     * @return A URL pointing to the resource
-     */
-    private URL getResource(String resourceName) {
-        ClassLoader loader =
-                this.firstNonNull(
-                        Thread.currentThread().getContextClassLoader(), SchemaParser.class.getClassLoader());
-
-        URL url = loader.getResource(resourceName);
-
-        if(url == null) {
-            throw new RuntimeException("Resource " + resourceName + " not found.");
-        }
-
-        return url;
-    }
-
-    /**
-     * Returns the first non-null element provided
-     * @param first An object
-     * @param second Another object
-     * @param <T> The type of each object
-     * @return The first non-null element
-     */
-    private <T> T firstNonNull(T first, T second) {
-        if (first != null) {
-            return first;
-        }
-        if (second != null) {
-            return second;
-        }
-        throw new NullPointerException("Both parameters are null");
-    }
-
-    /**
-     * Reads a file and returns its contents as a String
-     * @param path The path to the file
-     * @return The contents of the file
-     * @throws IOException Thrown if the file cannot be read
-     */
-    private String readFile(String path) throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
-        return new String(encoded, StandardCharsets.US_ASCII);
     }
 }
