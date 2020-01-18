@@ -18,6 +18,10 @@ public class GraphQLDirectiveParser implements GraphQLClassParserStrategy {
         String typeName = clazz.getAnnotation(GraphQLDirective.class).value();
         Object instance = fetcher.getInstance(clazz);
 
+        if (!(instance instanceof SchemaDirectiveWiring)) {
+            return;
+        }
+
         directiveBank.addDirective(new GraphQLDirectiveType(typeName, (SchemaDirectiveWiring) instance));
     }
 }

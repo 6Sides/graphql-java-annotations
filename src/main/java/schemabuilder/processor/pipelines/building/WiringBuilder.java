@@ -23,9 +23,15 @@ public class WiringBuilder {
     private GraphQLScalarBank scalars = GraphQLScalarBank.getInstance();
     private GraphQLTypeResolverBank typeResolvers = GraphQLTypeResolverBank.getInstance();
 
-    public WiringBuilder() {
-        new GraphQLClassParser().parseClasses();
+
+    public static WiringBuilder withClasses(Set<Class<?>> clazzes) {
+        return new WiringBuilder(clazzes);
     }
+
+    private WiringBuilder(Set<Class<?>> clazzes) {
+        new GraphQLClassParser(null, clazzes).parseClasses();
+    }
+
 
     public RuntimeWiring.Builder buildWiring() {
         Map<String, Set<GraphQLDataFetcherType>> typeMap = new HashMap<>();

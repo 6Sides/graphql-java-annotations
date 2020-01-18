@@ -4,6 +4,7 @@ import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import java.util.HashSet;
 import schemabuilder.processor.pipelines.building.WiringBuilder;
 import schemabuilder.processor.schema.SchemaParser;
 
@@ -35,11 +36,10 @@ public class GraphQLSchemaBuilder {
      * Creates A GraphQLSchemaBuilder object used to generate a {@link GraphQLSchema}
      *
      * @param schemaParser The {@link SchemaParser} to use.
-     * @param builder The {@link GraphQLWiringBuilder} to use.
      */
     public GraphQLSchemaBuilder(final SchemaParser schemaParser) {
         this.schemaParser = schemaParser;
-        this.builder = new WiringBuilder();
+        this.builder = WiringBuilder.withClasses(new HashSet<>());
     }
 
     /*public void addClass(Class<?> clazz) {
