@@ -51,14 +51,13 @@ public class WiringBuilder {
                 typeBuilder.dataFetcher(dataFetcher.getName(), dataFetcher.getDataFetcher());
             }
 
-            for (GraphQLTypeResolverType resolver : this.typeResolvers.getTypeResolvers()) {
-                if (resolver.getName().equals(typeName)) {
-                    typeBuilder.typeResolver(resolver.getResolver());
-                    break;
-                }
-            }
-
             builder.type(typeBuilder);
+        }
+
+        for (GraphQLTypeResolverType resolver : this.typeResolvers.getTypeResolvers()) {
+            TypeRuntimeWiring.Builder typeResolverBuilder = TypeRuntimeWiring.newTypeWiring(resolver.getName());
+            typeResolverBuilder.typeResolver(resolver.getResolver());
+            builder.type(typeResolverBuilder);
         }
 
 
