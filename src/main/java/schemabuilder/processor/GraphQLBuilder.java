@@ -1,12 +1,18 @@
 package schemabuilder.processor;
 
 import graphql.GraphQL;
+import graphql.execution.instrumentation.ChainedInstrumentation;
+import graphql.execution.instrumentation.Instrumentation;
+import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
+import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentationOptions;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import schemabuilder.annotations.documentation.Stable;
 import schemabuilder.processor.pipelines.building.WiringBuilder;
@@ -17,11 +23,12 @@ public final class GraphQLBuilder {
 
     private final WiringBuilder builder;
     private final SchemaParser schemaParser;
+    private final ChainedInstrumentation instrumentation;
 
-
-    private GraphQLBuilder(Set<Class<?>> additionalClasses, String basePackageForClasses, String schemaFileExtension) {
+    private GraphQLBuilder(Set<Class<?>> additionalClasses, String basePackageForClasses, String schemaFileExtension, ChainedInstrumentation instrumentation) {
         this.builder = WiringBuilder.withOptions(basePackageForClasses, additionalClasses);
         this.schemaParser = new SchemaParser("", schemaFileExtension);
+        this.instrumentation = instrumentation;
     }
 
     public GraphQL generateGraphQL() throws IOException {
@@ -31,7 +38,9 @@ public final class GraphQLBuilder {
         SchemaGenerator schemaGenerator = new SchemaGenerator();
         GraphQLSchema schema = schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
 
-        return GraphQL.newGraphQL(schema).build();
+        return GraphQL.newGraphQL(schema)
+                .instrumentation(instrumentation)
+                .build();
     }
 
     public static Builder newGraphQLBuilder() {
@@ -43,11 +52,23 @@ public final class GraphQLBuilder {
         private Set<Class<?>> additionalClasses;
         private String basePackageForClasses;
         private String schemaFileExtension;
+        private ChainedInstrumentation instrumentation;
 
         public Builder() {
             this.additionalClasses = new HashSet<>();
             this.basePackageForClasses = null;
             this.schemaFileExtension = "graphqls";
+
+
+            List<Instrumentation> insts = new ArrayList<>();
+            insts.add(
+                    new DataLoaderDispatcherInstrumentation(
+                            DataLoaderDispatcherInstrumentationOptions.newOptions()
+                            .includeStatistics(true)
+                    )
+            );
+
+            this.instrumentation = new ChainedInstrumentation(insts);
         }
 
         public Builder addClass(Class<?> clazz) {
@@ -65,11 +86,17 @@ public final class GraphQLBuilder {
             return this;
         }
 
+        public Builder setInstrumentaiton(ChainedInstrumentation instrumentation) {
+            this.instrumentation = instrumentation;
+            return this;
+        }
+
         public GraphQLBuilder build() {
             return new GraphQLBuilder(
                     this.additionalClasses,
                     this.basePackageForClasses,
-                    this.schemaFileExtension
+                    this.schemaFileExtension,
+                    this.instrumentation
             );
         }
     }
