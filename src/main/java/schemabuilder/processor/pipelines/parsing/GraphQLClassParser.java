@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import schemabuilder.processor.pipelines.parsing.datafetchers.GraphQLDataFetcherBank;
 import schemabuilder.processor.pipelines.parsing.datafetchers.GraphQLTypeParser;
+import schemabuilder.processor.pipelines.parsing.dataloaders.DataLoaderRepository;
+import schemabuilder.processor.pipelines.parsing.dataloaders.GraphQLDataLoaderParser;
 import schemabuilder.processor.pipelines.parsing.directives.GraphQLDirectiveBank;
 import schemabuilder.processor.pipelines.parsing.directives.GraphQLDirectiveParser;
 import schemabuilder.processor.pipelines.parsing.scalars.GraphQLScalarBank;
@@ -35,6 +37,7 @@ public class GraphQLClassParser {
         strategies.add(new GraphQLDirectiveParser());
         strategies.add(new GraphQLScalarParser());
         strategies.add(new GraphQLTypeResolverParser());
+        strategies.add(new GraphQLDataLoaderParser());
     }
 
     public GraphQLClassParser() {
@@ -75,6 +78,10 @@ public class GraphQLClassParser {
         System.out.println("Printing Type Resolvers");
         GraphQLTypeResolverBank typeResolvers = GraphQLTypeResolverBank.getInstance();
         typeResolvers.getTypeResolvers().forEach(System.out::println);
+
+        System.out.println("Printing Batch Loaders");
+        DataLoaderRepository dataLoaders = DataLoaderRepository.getInstance();
+        dataLoaders.getDataLoaderRegistry().getDataLoaders().forEach(System.out::println);
     }
 
 }

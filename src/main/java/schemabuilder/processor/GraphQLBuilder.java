@@ -8,9 +8,11 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import schemabuilder.annotations.documentation.Stable;
 import schemabuilder.processor.pipelines.building.WiringBuilder;
 import schemabuilder.processor.schema.SchemaParser;
 
+@Stable
 public final class GraphQLBuilder {
 
     private final WiringBuilder builder;

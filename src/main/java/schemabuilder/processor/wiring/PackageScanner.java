@@ -3,7 +3,6 @@ package schemabuilder.processor.wiring;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

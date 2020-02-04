@@ -23,7 +23,6 @@ public class WiringBuilder {
     private GraphQLScalarBank scalars = GraphQLScalarBank.getInstance();
     private GraphQLTypeResolverBank typeResolvers = GraphQLTypeResolverBank.getInstance();
 
-
     public static WiringBuilder withOptions(String basePackage, Set<Class<?>> clazzes) {
         return new WiringBuilder(basePackage, clazzes);
     }
@@ -68,6 +67,7 @@ public class WiringBuilder {
         for (GraphQLDirectiveType directive : this.directives.getDirectives()) {
             builder.directive(directive.getName(), directive.getDirective());
         }
+
 
         return builder;
     }
