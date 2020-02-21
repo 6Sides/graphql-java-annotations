@@ -4,6 +4,8 @@ import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.idl.SchemaDirectiveWiring;
 import graphql.schema.idl.SchemaDirectiveWiringEnvironment;
+import java.util.HashMap;
+import java.util.Map;
 import schemabuilder.annotations.graphql.GraphQLDirective;
 
 /**
@@ -29,7 +31,9 @@ public class Authorization implements SchemaDirectiveWiring {
             if (ctx.hasPermission(targetAuthRole)) {
                 return originalDataFetcher.get(dataFetchingEnvironment);
             } else {
-                return null;
+                Map<String, Object> result = new HashMap<>();
+                result.put("error", new AuthorizationFailedResponse());
+                return result;
             }
         };
 
