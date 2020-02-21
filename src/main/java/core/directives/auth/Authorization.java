@@ -28,12 +28,13 @@ public class Authorization implements SchemaDirectiveWiring {
         DataFetcher authDataFetcher = dataFetchingEnvironment -> {
             PermissionCheck ctx = dataFetchingEnvironment.getContext();
 
-            if (ctx.hasPermission(targetAuthRole)) {
+            Object result = ctx.hasPermission(targetAuthRole);
+            if (result == null) {
                 return originalDataFetcher.get(dataFetchingEnvironment);
             } else {
-                Map<String, Object> result = new HashMap<>();
-                result.put("error", new AuthorizationFailedResponse());
-                return result;
+                Map<String, Object> response = new HashMap<>();
+                response.put("error", result);
+                return response;
             }
         };
 
