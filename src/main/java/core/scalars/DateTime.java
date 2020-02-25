@@ -6,7 +6,6 @@ import graphql.schema.CoercingParseLiteralException;
 import graphql.schema.CoercingParseValueException;
 import graphql.schema.CoercingSerializeException;
 import graphql.schema.GraphQLScalarType;
-import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import schemabuilder.annotations.graphql.GraphQLScalar;
@@ -14,9 +13,6 @@ import schemabuilder.annotations.graphql.GraphQLSchemaConfiguration;
 
 @GraphQLSchemaConfiguration
 public class DateTime {
-
-    // Format in ISO 8601
-    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
     @GraphQLScalar("DateTime")
     public static GraphQLScalarType getDateTimeScalar() {
@@ -35,7 +31,7 @@ public class DateTime {
                                                     + " as a DateTime");
                                 }
 
-                                return formatter.format(dataFetcherResult);
+                                return dataFetcherResult.toString();
                             }
 
                             @Override
