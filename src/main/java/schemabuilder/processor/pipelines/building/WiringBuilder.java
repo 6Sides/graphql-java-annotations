@@ -46,8 +46,10 @@ public class WiringBuilder {
         for (String typeName : typeMap.keySet()) {
             TypeRuntimeWiring.Builder typeBuilder = TypeRuntimeWiring.newTypeWiring(typeName);
 
+            System.out.println(typeName);
             for (GraphQLDataFetcherType dataFetcher : this.dataFetchers.getDataFetchers()) {
                 typeBuilder.dataFetcher(dataFetcher.getName(), dataFetcher.getDataFetcher());
+                System.out.println("-" + dataFetcher.getName());
             }
 
             builder.type(typeBuilder);
