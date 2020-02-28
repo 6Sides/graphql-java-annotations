@@ -11,7 +11,7 @@ import schemabuilder.annotations.graphql.GraphQLDirective;
 /**
  * To use this directive:
  *
- * 1. Include `directive @auth(permission : String!) on FIELD_DEFINITION` in a .graphqls file.
+ * 1. Include `directive @auth(policyId: Int!) on FIELD_DEFINITION` in a .graphqls file.
  * 2. Implement the {@link PolicyCheck} interface in your GraphQL Context object.
  */
 @GraphQLDirective("auth")
