@@ -1,6 +1,6 @@
 package core.directives.auth;
 
-public interface PermissionCheck {
+public interface PolicyCheck {
 
     /**
      * Checks if the entity has permission.
@@ -8,6 +8,6 @@ public interface PermissionCheck {
      * @param permission
      * @return
      */
-    Object hasPermission(String permission);
+    Object hasPermission(Integer permission);
 
 }
