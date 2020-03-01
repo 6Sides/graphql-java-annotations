@@ -25,7 +25,7 @@ public class ThrottleInstrumentation extends SimpleInstrumentation {
                 state.addToCost(((StatefulDataFetcher<?>) dataFetcher).getCost());
             }
 
-            return dataFetcher;
+            return dataFetcher.get(env);
         };
     }
 
