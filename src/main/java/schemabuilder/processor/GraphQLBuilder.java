@@ -62,7 +62,7 @@ public final class GraphQLBuilder {
         private String schemaFileExtension;
         private ChainedInstrumentation instrumentation;
 
-        private Integer maxQueryCost = 1000;
+        private Integer maxQueryCost = 100;
 
 
         public Builder() {
