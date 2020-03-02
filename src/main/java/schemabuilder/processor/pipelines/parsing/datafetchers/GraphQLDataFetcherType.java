@@ -7,10 +7,12 @@ public class GraphQLDataFetcherType {
 
     private String typeName;
     private String name;
+    private int cost;
     private DataFetcher<?> dataFetcher;
 
-    public GraphQLDataFetcherType(String typeName, String name, DataFetcher<?> dataFetcher) {
+    public GraphQLDataFetcherType(String typeName, int cost, String name, DataFetcher<?> dataFetcher) {
         this.typeName = typeName;
+        this.cost = cost;
         this.name = name;
         this.dataFetcher = dataFetcher;
     }
@@ -25,6 +27,10 @@ public class GraphQLDataFetcherType {
 
     public String getTypeName() {
         return typeName;
+    }
+
+    public int getCost() {
+        return cost;
     }
 
     @Override

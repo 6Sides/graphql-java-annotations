@@ -21,6 +21,7 @@ public class GraphQLDataFetcherBank {
 
 
     public void addDataFetcher(GraphQLDataFetcherType dataFetcher) {
+        DataFetcherCostMap.setCostFor(dataFetcher.getDataFetcher(), dataFetcher.getCost());
         dataFetchers.add(dataFetcher);
     }
 

@@ -19,4 +19,7 @@ public @interface GraphQLDataFetcher {
      */
     String value() default "";
 
+
+    int cost() default 0;
+
 }

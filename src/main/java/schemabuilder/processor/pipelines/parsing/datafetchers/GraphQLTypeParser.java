@@ -35,9 +35,11 @@ public class GraphQLTypeParser implements GraphQLClassParserStrategy {
                 fieldName = annotation.value();
             }
 
+            int cost = annotation.cost();
+
             method.setAccessible(true);
             try {
-                dataFetcherBank.addDataFetcher(new GraphQLDataFetcherType(typeName, fieldName, (DataFetcher<?>) method.invoke(instance)));
+                dataFetcherBank.addDataFetcher(new GraphQLDataFetcherType(typeName, cost, fieldName, (DataFetcher<?>) method.invoke(instance)));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
