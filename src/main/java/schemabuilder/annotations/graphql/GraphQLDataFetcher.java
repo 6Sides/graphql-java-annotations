@@ -20,6 +20,6 @@ public @interface GraphQLDataFetcher {
     String value() default "";
 
 
-    int cost() default 1;
+    int cost() default 0;
 
 }
