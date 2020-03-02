@@ -9,7 +9,7 @@ public class DataFetcherCostMap {
     private static final Map<DataFetcher, Integer> map = new HashMap<>();
 
     public static int getCostFor(DataFetcher dataFetcher) {
-        return map.get(dataFetcher);
+        return map.getOrDefault(dataFetcher, 0);
     }
 
     public static void setCostFor(DataFetcher dataFetcher, int cost) {

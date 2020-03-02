@@ -19,10 +19,7 @@ public class ThrottleInstrumentation extends SimpleInstrumentation {
 
     @Override
     public DataFetcher<?> instrumentDataFetcher(DataFetcher<?> dataFetcher, InstrumentationFieldFetchParameters parameters) {
-        if (dataFetcher != null) {
-            ((ThrottleInstrumentationState) parameters.getInstrumentationState())
-                    .addToCost(DataFetcherCostMap.getCostFor(dataFetcher));
-        }
+        ((ThrottleInstrumentationState) parameters.getInstrumentationState()).addToCost(DataFetcherCostMap.getCostFor(dataFetcher));
         return dataFetcher;
     }
 
