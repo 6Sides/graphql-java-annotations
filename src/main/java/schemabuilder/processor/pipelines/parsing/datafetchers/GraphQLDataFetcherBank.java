@@ -29,7 +29,4 @@ public class GraphQLDataFetcherBank {
         return dataFetchers;
     }
 
-    public Set<GraphQLDataFetcherType> getFetchersForType() {
-        return null;
-    }
 }

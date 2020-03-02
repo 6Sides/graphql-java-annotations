@@ -55,6 +55,7 @@ public class GraphQLDataFetcherType {
         return "GraphQLDataFetcherType{" +
                 "typeName='" + typeName + '\'' +
                 ", name='" + name + '\'' +
+                ", cost=" + cost +
                 '}';
     }
 }
