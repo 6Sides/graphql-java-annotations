@@ -7,6 +7,7 @@ import graphql.schema.idl.SchemaDirectiveWiringEnvironment;
 import java.util.HashMap;
 import java.util.Map;
 import schemabuilder.annotations.graphql.GraphQLDirective;
+import schemabuilder.processor.pipelines.parsing.datafetchers.DataFetcherCostMap;
 
 /**
  * To use this directive:
@@ -37,6 +38,8 @@ public class Authorization implements SchemaDirectiveWiring {
                 return response;
             }
         };
+
+        DataFetcherCostMap.setCostFor(authDataFetcher, DataFetcherCostMap.getCostFor(originalDataFetcher));
 
         // Now change the field definition to have the new authorizing data fetcher
         return field.transform(builder -> builder.dataFetcher(authDataFetcher));
