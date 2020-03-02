@@ -21,14 +21,18 @@ import schemabuilder.processor.schema.SchemaParser;
 @Stable
 public final class GraphQLBuilder {
 
+    private static int maxQueryCost;
+
     private final WiringBuilder builder;
     private final SchemaParser schemaParser;
     private final ChainedInstrumentation instrumentation;
 
-    private GraphQLBuilder(Set<Class<?>> additionalClasses, String basePackageForClasses, String schemaFileExtension, ChainedInstrumentation instrumentation) {
+    private GraphQLBuilder(Set<Class<?>> additionalClasses, String basePackageForClasses, String schemaFileExtension, ChainedInstrumentation instrumentation, int maxQueryCost) {
         this.builder = WiringBuilder.withOptions(basePackageForClasses, additionalClasses);
         this.schemaParser = new SchemaParser("", schemaFileExtension);
         this.instrumentation = instrumentation;
+
+        GraphQLBuilder.maxQueryCost = maxQueryCost;
     }
 
     public GraphQL generateGraphQL() throws IOException {
@@ -47,12 +51,19 @@ public final class GraphQLBuilder {
         return new Builder();
     }
 
+    public static int getMaxQueryCost() {
+        return maxQueryCost;
+    }
+
     public static class Builder {
 
         private Set<Class<?>> additionalClasses;
         private String basePackageForClasses;
         private String schemaFileExtension;
         private ChainedInstrumentation instrumentation;
+
+        private Integer maxQueryCost = 1000;
+
 
         public Builder() {
             this.additionalClasses = new HashSet<>();
@@ -91,12 +102,18 @@ public final class GraphQLBuilder {
             return this;
         }
 
+        public Builder setMaxQueryCost(int maxQueryCost) {
+            this.maxQueryCost = maxQueryCost;
+            return this;
+        }
+
         public GraphQLBuilder build() {
             return new GraphQLBuilder(
                     this.additionalClasses,
                     this.basePackageForClasses,
                     this.schemaFileExtension,
-                    this.instrumentation
+                    this.instrumentation,
+                    this.maxQueryCost
             );
         }
     }
