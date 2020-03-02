@@ -9,4 +9,8 @@ public class ThrottleInstrumentationState implements InstrumentationState {
     void addToCost(int cost) {
         totalCost += cost;
     }
+
+    public int getTotalCost() {
+        return totalCost;
+    }
 }
