@@ -12,7 +12,7 @@ import schemabuilder.processor.pipelines.parsing.datafetchers.DataFetcherCostMap
 /**
  * To use this directive:
  *
- * 1. Include `directive @auth(policyId: Int!) on FIELD_DEFINITION` in a .graphqls file.
+ * 1. Include `directive @auth(policy: Int!) on FIELD_DEFINITION` in a .graphqls file.
  * 2. Implement the {@link PolicyCheck} interface in your GraphQL Context object.
  */
 @GraphQLDirective("auth")
@@ -20,7 +20,7 @@ public class Authorization implements SchemaDirectiveWiring {
 
     @Override
     public GraphQLFieldDefinition onField(SchemaDirectiveWiringEnvironment<GraphQLFieldDefinition> schemaDirectiveWiringEnv) {
-        Integer targetAuthRole = (Integer) schemaDirectiveWiringEnv.getDirective().getArgument("policyId").getValue();
+        String targetAuthRole = (String) schemaDirectiveWiringEnv.getDirective().getArgument("policy").getValue();
         GraphQLFieldDefinition field = schemaDirectiveWiringEnv.getElement();
 
         // Build a data fetcher that first checks authorization roles before then calling the original data fetcher
