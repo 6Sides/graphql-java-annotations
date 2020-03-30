@@ -21,4 +21,7 @@ dependencies {
 
     // Google Guava for reflection
     implementation("com.google.guava:guava:28.2-jre")
+
+    // https://mvnrepository.com/artifact/com.google.inject/guice
+    compile group: 'com.google.inject', name: 'guice', version: '4.2.3'
 }

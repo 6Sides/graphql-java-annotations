@@ -23,15 +23,16 @@ import schemabuilder.processor.wiring.PackageScanner;
 public class GraphQLClassParser {
 
     private List<GraphQLClassParserStrategy> strategies = new ArrayList<>();
-    private InstanceFetcher instanceFetcher = new DefaultInstanceFetcher();
+    private InstanceFetcher instanceFetcher;
 
     private String basePackage;
     private Set<Class<?>> additionalClasses;
 
 
-    public GraphQLClassParser(String basePackage, Set<Class<?>> additionalClasses) {
+    public GraphQLClassParser(String basePackage, Set<Class<?>> additionalClasses, InstanceFetcher fetcher) {
         this.basePackage = basePackage;
         this.additionalClasses = additionalClasses;
+        this.instanceFetcher = fetcher;
 
         strategies.add(new GraphQLTypeParser());
         strategies.add(new GraphQLDirectiveParser());
@@ -41,7 +42,7 @@ public class GraphQLClassParser {
     }
 
     public GraphQLClassParser() {
-        this(null, new HashSet<>());
+        this(null, new HashSet<>(), new DefaultInstanceFetcher());
     }
 
     public void parseClasses() {

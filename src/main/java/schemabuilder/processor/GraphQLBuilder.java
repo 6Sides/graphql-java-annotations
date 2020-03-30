@@ -17,6 +17,8 @@ import java.util.Set;
 import schemabuilder.annotations.documentation.Stable;
 import schemabuilder.processor.pipelines.building.WiringBuilder;
 import schemabuilder.processor.schema.SchemaParser;
+import schemabuilder.processor.wiring.DefaultInstanceFetcher;
+import schemabuilder.processor.wiring.InstanceFetcher;
 
 @Stable
 public final class GraphQLBuilder {
@@ -27,8 +29,8 @@ public final class GraphQLBuilder {
     private final SchemaParser schemaParser;
     private final ChainedInstrumentation instrumentation;
 
-    private GraphQLBuilder(Set<Class<?>> additionalClasses, String basePackageForClasses, String schemaFileExtension, ChainedInstrumentation instrumentation, int maxQueryCost) {
-        this.builder = WiringBuilder.withOptions(basePackageForClasses, additionalClasses);
+    private GraphQLBuilder(InstanceFetcher fetcher, Set<Class<?>> additionalClasses, String basePackageForClasses, String schemaFileExtension, ChainedInstrumentation instrumentation, int maxQueryCost) {
+        this.builder = WiringBuilder.withOptions(basePackageForClasses, additionalClasses, fetcher);
         this.schemaParser = new SchemaParser("", schemaFileExtension);
         this.instrumentation = instrumentation;
 
@@ -57,6 +59,8 @@ public final class GraphQLBuilder {
 
     public static class Builder {
 
+        private InstanceFetcher fetcher = new DefaultInstanceFetcher();
+
         private Set<Class<?>> additionalClasses;
         private String basePackageForClasses;
         private String schemaFileExtension;
@@ -80,6 +84,11 @@ public final class GraphQLBuilder {
             );
 
             this.instrumentation = new ChainedInstrumentation(insts);
+        }
+
+        public Builder setInstanceFetcher(InstanceFetcher injector) {
+            this.fetcher = injector;
+            return this;
         }
 
         public Builder addClass(Class<?> clazz) {
@@ -109,6 +118,7 @@ public final class GraphQLBuilder {
 
         public GraphQLBuilder build() {
             return new GraphQLBuilder(
+                    this.fetcher,
                     this.additionalClasses,
                     this.basePackageForClasses,
                     this.schemaFileExtension,

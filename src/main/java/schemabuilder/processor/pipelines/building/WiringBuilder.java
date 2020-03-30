@@ -15,6 +15,7 @@ import schemabuilder.processor.pipelines.parsing.scalars.GraphQLScalarBank;
 import schemabuilder.processor.pipelines.parsing.scalars.GraphQLScalarType;
 import schemabuilder.processor.pipelines.parsing.typeresolvers.GraphQLTypeResolverBank;
 import schemabuilder.processor.pipelines.parsing.typeresolvers.GraphQLTypeResolverType;
+import schemabuilder.processor.wiring.InstanceFetcher;
 
 public class WiringBuilder {
 
@@ -23,12 +24,12 @@ public class WiringBuilder {
     private GraphQLScalarBank scalars = GraphQLScalarBank.getInstance();
     private GraphQLTypeResolverBank typeResolvers = GraphQLTypeResolverBank.getInstance();
 
-    public static WiringBuilder withOptions(String basePackage, Set<Class<?>> clazzes) {
-        return new WiringBuilder(basePackage, clazzes);
+    public static WiringBuilder withOptions(String basePackage, Set<Class<?>> clazzes, InstanceFetcher fetcher) {
+        return new WiringBuilder(basePackage, clazzes, fetcher);
     }
 
-    private WiringBuilder(String basePackage, Set<Class<?>> clazzes) {
-        new GraphQLClassParser(basePackage, clazzes).parseClasses();
+    private WiringBuilder(String basePackage, Set<Class<?>> clazzes, InstanceFetcher fetcher) {
+        new GraphQLClassParser(basePackage, clazzes, fetcher).parseClasses();
     }
 
 
