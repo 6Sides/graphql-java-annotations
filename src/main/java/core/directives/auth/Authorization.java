@@ -1,5 +1,6 @@
 package core.directives.auth;
 
+import com.google.inject.Inject;
 import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.idl.SchemaDirectiveWiring;
@@ -13,10 +14,19 @@ import schemabuilder.processor.pipelines.parsing.datafetchers.DataFetcherCostMap
  * To use this directive:
  *
  * 1. Include `directive @auth(policy: Int!) on FIELD_DEFINITION` in a .graphqls file.
- * 2. Implement the {@link PolicyCheck} interface in your GraphQL Context object.
+ * 2. Implement the {@link PolicyChecker} interface in your GraphQL Context object.
+ *
+ * <T> The type of the context
  */
 @GraphQLDirective("auth")
-public class Authorization implements SchemaDirectiveWiring {
+public class Authorization<T> implements SchemaDirectiveWiring {
+
+    private final PolicyCheckProvider<T> provider;
+
+    @Inject
+    public Authorization(PolicyCheckProvider<T> provider) {
+        this.provider = provider;
+    }
 
     @Override
     public GraphQLFieldDefinition onField(SchemaDirectiveWiringEnvironment<GraphQLFieldDefinition> schemaDirectiveWiringEnv) {
@@ -27,9 +37,10 @@ public class Authorization implements SchemaDirectiveWiring {
         DataFetcher originalDataFetcher = field.getDataFetcher();
 
         DataFetcher authDataFetcher = dataFetchingEnvironment -> {
-            PolicyCheck ctx = dataFetchingEnvironment.getContext();
+            T ctx = dataFetchingEnvironment.getContext();
 
-            Object result = ctx.hasPermission(targetAuthRole);
+            Object result = provider.create().hasPermission(ctx, targetAuthRole);
+
             if (result == null) {
                 return originalDataFetcher.get(dataFetchingEnvironment);
             } else {
