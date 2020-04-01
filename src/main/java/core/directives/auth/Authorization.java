@@ -19,12 +19,12 @@ import schemabuilder.processor.pipelines.parsing.datafetchers.DataFetcherCostMap
  * <T> The type of the context
  */
 @GraphQLDirective("auth")
-public class Authorization<T> implements SchemaDirectiveWiring {
+public class Authorization implements SchemaDirectiveWiring {
 
-    private final PolicyCheckProvider<T> provider;
+    private final PolicyCheckProvider provider;
 
     @Inject
-    public Authorization(PolicyCheckProvider<T> provider) {
+    public Authorization(PolicyCheckProvider provider) {
         this.provider = provider;
     }
 
@@ -37,7 +37,7 @@ public class Authorization<T> implements SchemaDirectiveWiring {
         DataFetcher originalDataFetcher = field.getDataFetcher();
 
         DataFetcher authDataFetcher = dataFetchingEnvironment -> {
-            T ctx = dataFetchingEnvironment.getContext();
+            Object ctx = dataFetchingEnvironment.getContext();
 
             Object result = provider.create().hasPermission(ctx, targetAuthRole);
 

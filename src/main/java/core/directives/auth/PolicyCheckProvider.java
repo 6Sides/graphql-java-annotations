@@ -3,8 +3,8 @@ package core.directives.auth;
 /**
  * Provides an object to check a requests policy
  */
-public interface PolicyCheckProvider<T> {
+public interface PolicyCheckProvider {
 
-    PolicyChecker<T> create();
+    PolicyChecker create();
 
 }
