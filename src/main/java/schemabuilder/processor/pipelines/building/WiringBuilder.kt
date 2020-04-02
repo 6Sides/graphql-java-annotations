@@ -3,19 +3,16 @@ package schemabuilder.processor.pipelines.building
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeRuntimeWiring
 import schemabuilder.processor.pipelines.parsing.GraphQLClassParser
-import schemabuilder.processor.pipelines.parsing.datafetchers.GraphQLDataFetcherBank
+import schemabuilder.processor.pipelines.parsing.ParsedResults
 import schemabuilder.processor.pipelines.parsing.datafetchers.GraphQLDataFetcherType
-import schemabuilder.processor.pipelines.parsing.directives.GraphQLDirectiveBank
-import schemabuilder.processor.pipelines.parsing.scalars.GraphQLScalarBank
-import schemabuilder.processor.pipelines.parsing.typeresolvers.GraphQLTypeResolverBank
 import schemabuilder.processor.wiring.InstanceFetcher
 import java.util.*
 
-class WiringBuilder private constructor(basePackage: String?, clazzes: Set<Class<*>?>, fetcher: InstanceFetcher) {
+class WiringBuilder private constructor(basePackage: String?, clazzes: Set<Class<*>>, fetcher: InstanceFetcher) {
 
     fun buildWiring(): RuntimeWiring.Builder {
         val typeMap: MutableMap<String?, MutableSet<GraphQLDataFetcherType>> = HashMap()
-        for (dataFetcher in GraphQLDataFetcherBank.dataFetchers) {
+        for (dataFetcher in ParsedResults.datafetchers) {
             typeMap.computeIfAbsent(dataFetcher.typeName) { HashSet() }
             typeMap[dataFetcher.typeName]?.add(dataFetcher)
         }
@@ -29,22 +26,22 @@ class WiringBuilder private constructor(basePackage: String?, clazzes: Set<Class
             }
             builder.type(typeBuilder)
         }
-        for (resolver in GraphQLTypeResolverBank.typeResolvers) {
-            val typeResolverBuilder = TypeRuntimeWiring.newTypeWiring(resolver?.name)
-            typeResolverBuilder.typeResolver(resolver?.resolver)
+        for (resolver in ParsedResults.typeResolvers) {
+            val typeResolverBuilder = TypeRuntimeWiring.newTypeWiring(resolver.name)
+            typeResolverBuilder.typeResolver(resolver.resolver)
             builder.type(typeResolverBuilder)
         }
-        for (scalar in GraphQLScalarBank.scalars) {
-            builder.scalar(scalar?.scalar)
+        for (scalar in ParsedResults.scalars) {
+            builder.scalar(scalar.scalar)
         }
-        for (directive in GraphQLDirectiveBank.directives) {
-            builder.directive(directive?.name, directive?.directive)
+        for (directive in ParsedResults.directives) {
+            builder.directive(directive.name, directive.directive)
         }
         return builder
     }
 
     companion object {
-        fun withOptions(basePackage: String?, clazzes: Set<Class<*>?>, fetcher: InstanceFetcher): WiringBuilder {
+        fun withOptions(basePackage: String?, clazzes: Set<Class<*>>, fetcher: InstanceFetcher): WiringBuilder {
             return WiringBuilder(basePackage, clazzes, fetcher)
         }
     }

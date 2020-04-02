@@ -1,6 +1,7 @@
 package schemabuilder.processor.pipelines.parsing
 
 import schemabuilder.processor.wiring.InstanceFetcher
+import kotlin.reflect.KClass
 
 interface GraphQLClassParserStrategy {
 
@@ -8,10 +9,10 @@ interface GraphQLClassParserStrategy {
 
     /**
      * Precondition logic to determine if the class should be passed
-     * to the parser.
+     * to the parse function.
      *
      * @return true if the class should be parsed, false otherwise.
      */
-    fun shouldParse(clazz: Class<*>): Boolean = true
+    fun shouldParse(clazz: KClass<*>): Boolean
 
 }

@@ -15,7 +15,7 @@ import java.io.IOException
 import java.util.*
 
 @Stable
-class GraphQLBuilder private constructor(fetcher: InstanceFetcher, additionalClasses: Set<Class<*>?>, basePackageForClasses: String?, schemaFileExtension: String, instrumentation: ChainedInstrumentation, maxQueryCost: Int) {
+class GraphQLBuilder private constructor(fetcher: InstanceFetcher, additionalClasses: Set<Class<*>>, basePackageForClasses: String?, schemaFileExtension: String, instrumentation: ChainedInstrumentation, maxQueryCost: Int) {
     private val builder: WiringBuilder
     private val schemaParser: SchemaParser
     private val instrumentation: ChainedInstrumentation
@@ -32,17 +32,18 @@ class GraphQLBuilder private constructor(fetcher: InstanceFetcher, additionalCla
 
     class Builder {
         private var fetcher: InstanceFetcher = DefaultInstanceFetcher()
-        private val additionalClasses: MutableSet<Class<*>?>
+        private val additionalClasses: MutableSet<Class<*>>
         private var basePackageForClasses: String?
         private var schemaFileExtension: String
         private var instrumentation: ChainedInstrumentation
         private var maxQueryCost = 100
+
         fun setInstanceFetcher(injector: InstanceFetcher): Builder {
             fetcher = injector
             return this
         }
 
-        fun addClass(clazz: Class<*>?): Builder {
+        fun addClass(clazz: Class<*>): Builder {
             additionalClasses.add(clazz)
             return this
         }

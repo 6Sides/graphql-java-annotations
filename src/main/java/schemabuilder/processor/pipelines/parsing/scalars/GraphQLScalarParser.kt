@@ -3,11 +3,12 @@ package schemabuilder.processor.pipelines.parsing.scalars
 import schemabuilder.annotations.graphql.GraphQLScalar
 import schemabuilder.annotations.graphql.GraphQLSchemaConfiguration
 import schemabuilder.processor.pipelines.parsing.GraphQLClassParserStrategy
+import schemabuilder.processor.pipelines.parsing.ParsedResults
 import schemabuilder.processor.wiring.InstanceFetcher
-import java.lang.reflect.InvocationTargetException
+import kotlin.reflect.KClass
+import kotlin.reflect.full.hasAnnotation
 
 class GraphQLScalarParser : GraphQLClassParserStrategy {
-    private val scalarBank: GraphQLScalarBank = GraphQLScalarBank
     override fun parse(clazz: Class<*>, fetcher: InstanceFetcher) {
         val instance = fetcher.getInstance(clazz)
         for (method in clazz.declaredMethods) {
@@ -16,15 +17,11 @@ class GraphQLScalarParser : GraphQLClassParserStrategy {
                 continue
             }
             method.isAccessible = true
-            try {
-                scalarBank.addScalar(GraphQLScalarType(annotation.value, method.invoke(instance) as graphql.schema.GraphQLScalarType))
-            } catch (e: InvocationTargetException) {
-                e.printStackTrace()
-            } catch (e: IllegalAccessException) {
-                e.printStackTrace()
-            }
+
+            ParsedResults.scalars.add(GraphQLScalarType(annotation.value, method.invoke(instance) as graphql.schema.GraphQLScalarType))
         }
     }
 
-    override fun shouldParse(clazz: Class<*>): Boolean = clazz.isAnnotationPresent(GraphQLSchemaConfiguration::class.java)
+    @ExperimentalStdlibApi
+    override fun shouldParse(clazz: KClass<*>) = clazz.hasAnnotation<GraphQLSchemaConfiguration>()
 }

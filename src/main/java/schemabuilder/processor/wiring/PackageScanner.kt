@@ -9,13 +9,12 @@ class PackageScanner(private val basePackage: String?) {
     /**
      * Scans all classes accessible from the context class loader which belong to the given package and subpackages.
      *
-     * @return The classes
+     * @return The classes in the base package
      * @throws IOException
      */
     @get:Throws(IOException::class)
     val classes: MutableList<Class<*>>
         get() {
-            val classLoader = Thread.currentThread().contextClassLoader!!
             val classes = ArrayList<Class<*>>()
             val cp = ClassPath.from(Thread.currentThread().contextClassLoader)
             val scannedClasses: ImmutableSet<ClassPath.ClassInfo>

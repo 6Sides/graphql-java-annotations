@@ -4,8 +4,10 @@ import graphql.schema.DataFetcher
 import schemabuilder.annotations.graphql.GraphQLDataFetcher
 import schemabuilder.annotations.graphql.GraphQLTypeConfiguration
 import schemabuilder.processor.pipelines.parsing.GraphQLClassParserStrategy
+import schemabuilder.processor.pipelines.parsing.ParsedResults
 import schemabuilder.processor.wiring.InstanceFetcher
-import java.lang.reflect.InvocationTargetException
+import kotlin.reflect.KClass
+import kotlin.reflect.full.hasAnnotation
 
 class GraphQLTypeParser : GraphQLClassParserStrategy {
 
@@ -28,17 +30,12 @@ class GraphQLTypeParser : GraphQLClassParserStrategy {
             val cost: Int = annotation.cost
             method.isAccessible = true
 
-            try {
-                val inst = method.invoke(instance) as DataFetcher<*>
-                DataFetcherCostMap.setCostFor(inst, cost)
-                GraphQLDataFetcherBank.addDataFetcher(GraphQLDataFetcherType(typeName, cost, fieldName, inst))
-            } catch (e: IllegalAccessException) {
-                e.printStackTrace()
-            } catch (e: InvocationTargetException) {
-                e.printStackTrace()
-            }
+            val inst = method.invoke(instance) as DataFetcher<*>
+            DataFetcherCostMap.setCostFor(inst, cost)
+            ParsedResults.datafetchers.add(GraphQLDataFetcherType(typeName, cost, fieldName, inst))
         }
     }
 
-    override fun shouldParse(clazz: Class<*>): Boolean = clazz.isAnnotationPresent(GraphQLTypeConfiguration::class.java)
+    @ExperimentalStdlibApi
+    override fun shouldParse(clazz: KClass<*>) = clazz.hasAnnotation<GraphQLTypeConfiguration>()
 }
