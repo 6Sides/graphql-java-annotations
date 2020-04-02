@@ -1,50 +1,43 @@
-package schemabuilder.processor.pipelines.parsing.dataloaders;
+package schemabuilder.processor.pipelines.parsing.dataloaders
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import org.dataloader.BatchLoader;
-import org.dataloader.MappedBatchLoader;
-import schemabuilder.annotations.graphql.GraphQLDataLoader;
-import schemabuilder.annotations.graphql.GraphQLSchemaConfiguration;
-import schemabuilder.processor.pipelines.parsing.GraphQLClassParserStrategy;
-import schemabuilder.processor.wiring.InstanceFetcher;
+import org.dataloader.BatchLoader
+import org.dataloader.MappedBatchLoader
+import schemabuilder.annotations.graphql.GraphQLDataLoader
+import schemabuilder.annotations.graphql.GraphQLSchemaConfiguration
+import schemabuilder.processor.pipelines.parsing.GraphQLClassParserStrategy
+import schemabuilder.processor.wiring.InstanceFetcher
+import java.lang.reflect.InvocationTargetException
 
-public class GraphQLDataLoaderParser implements GraphQLClassParserStrategy {
-
-    @Override
-    public void parse(Class<?> clazz, InstanceFetcher fetcher) {
-        if (!clazz.isAnnotationPresent(GraphQLSchemaConfiguration.class)) {
-            return;
+class GraphQLDataLoaderParser : GraphQLClassParserStrategy {
+    override fun parse(clazz: Class<*>, fetcher: InstanceFetcher) {
+        if (!clazz?.isAnnotationPresent(GraphQLSchemaConfiguration::class.java)!!) {
+            return
         }
-
-        Object instance = fetcher.getInstance(clazz);
-
-        for (Method method : clazz.getDeclaredMethods()) {
-            GraphQLDataLoader annotation = method.getAnnotation(GraphQLDataLoader.class);
-            if(annotation == null || !method.getReturnType().equals(BatchLoader.class)
-                    && !method.getReturnType().equals(MappedBatchLoader.class)) {
-                continue;
+        val instance = fetcher.getInstance(clazz)
+        for (method in clazz.declaredMethods) {
+            val annotation = method.getAnnotation(GraphQLDataLoader::class.java)
+            if (annotation == null || method.returnType != BatchLoader::class.java
+                    && method.returnType != MappedBatchLoader::class.java) {
+                continue
             }
-
-            method.setAccessible(true);
-
-            String fieldName;
-            if(annotation.value().equals("")) {
-                fieldName = method.getName();
+            method.isAccessible = true
+            var fieldName: String
+            if (annotation.value == "") {
+                fieldName = method.name
             } else {
-                fieldName = annotation.value();
+                fieldName = annotation.value
             }
-
-            Class<?> returnType = method.getReturnType();
-
+            val returnType = method.returnType
             try {
-                if (returnType.equals(BatchLoader.class)) {
-                    DataLoaderRepository.getInstance().addBatchLoader(fieldName, (BatchLoader<?,?>) method.invoke(instance));
+                if (returnType == BatchLoader::class.java) {
+                    DataLoaderRepository.addBatchLoader(fieldName, method.invoke(instance) as BatchLoader<*, *>)
                 } else {
-                    DataLoaderRepository.getInstance().addBatchLoader(fieldName, (MappedBatchLoader<?,?>) method.invoke(instance));
+                    DataLoaderRepository.addBatchLoader(fieldName, method.invoke(instance) as MappedBatchLoader<*, *>)
                 }
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (e: InvocationTargetException) {
+                e.printStackTrace()
+            } catch (e: IllegalAccessException) {
+                e.printStackTrace()
             }
         }
     }

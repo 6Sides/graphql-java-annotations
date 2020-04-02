@@ -1,19 +1,14 @@
-package schemabuilder.annotations.documentation;
+package schemabuilder.annotations.documentation
 
-import static java.lang.annotation.ElementType.*;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.Documented
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
 
 /**
  * Denotes that the annotated type is exposed via the API and must remain
  * backwards-compatible between releases.
  */
 @Documented
-@Target({ TYPE, METHOD, CONSTRUCTOR })
+@Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR)
 @Retention(RetentionPolicy.SOURCE)
-public @interface Stable {
-
-}
+annotation class Stable

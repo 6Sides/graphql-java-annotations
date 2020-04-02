@@ -1,77 +1,55 @@
-package schemabuilder.processor.pipelines.building;
+package schemabuilder.processor.pipelines.building
 
-import graphql.schema.idl.RuntimeWiring;
-import graphql.schema.idl.TypeRuntimeWiring;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import schemabuilder.processor.pipelines.parsing.GraphQLClassParser;
-import schemabuilder.processor.pipelines.parsing.datafetchers.GraphQLDataFetcherBank;
-import schemabuilder.processor.pipelines.parsing.datafetchers.GraphQLDataFetcherType;
-import schemabuilder.processor.pipelines.parsing.directives.GraphQLDirectiveBank;
-import schemabuilder.processor.pipelines.parsing.directives.GraphQLDirectiveType;
-import schemabuilder.processor.pipelines.parsing.scalars.GraphQLScalarBank;
-import schemabuilder.processor.pipelines.parsing.scalars.GraphQLScalarType;
-import schemabuilder.processor.pipelines.parsing.typeresolvers.GraphQLTypeResolverBank;
-import schemabuilder.processor.pipelines.parsing.typeresolvers.GraphQLTypeResolverType;
-import schemabuilder.processor.wiring.InstanceFetcher;
+import graphql.schema.idl.RuntimeWiring
+import graphql.schema.idl.TypeRuntimeWiring
+import schemabuilder.processor.pipelines.parsing.GraphQLClassParser
+import schemabuilder.processor.pipelines.parsing.datafetchers.GraphQLDataFetcherBank
+import schemabuilder.processor.pipelines.parsing.datafetchers.GraphQLDataFetcherType
+import schemabuilder.processor.pipelines.parsing.directives.GraphQLDirectiveBank
+import schemabuilder.processor.pipelines.parsing.scalars.GraphQLScalarBank
+import schemabuilder.processor.pipelines.parsing.typeresolvers.GraphQLTypeResolverBank
+import schemabuilder.processor.wiring.InstanceFetcher
+import java.util.*
 
-public class WiringBuilder {
+class WiringBuilder private constructor(basePackage: String?, clazzes: Set<Class<*>?>, fetcher: InstanceFetcher) {
 
-    private GraphQLDataFetcherBank dataFetchers = GraphQLDataFetcherBank.getInstance();
-    private GraphQLDirectiveBank directives = GraphQLDirectiveBank.getInstance();
-    private GraphQLScalarBank scalars = GraphQLScalarBank.getInstance();
-    private GraphQLTypeResolverBank typeResolvers = GraphQLTypeResolverBank.getInstance();
-
-    public static WiringBuilder withOptions(String basePackage, Set<Class<?>> clazzes, InstanceFetcher fetcher) {
-        return new WiringBuilder(basePackage, clazzes, fetcher);
-    }
-
-    private WiringBuilder(String basePackage, Set<Class<?>> clazzes, InstanceFetcher fetcher) {
-        new GraphQLClassParser(basePackage, clazzes, fetcher).parseClasses();
-    }
-
-
-    public RuntimeWiring.Builder buildWiring() {
-        Map<String, Set<GraphQLDataFetcherType>> typeMap = new HashMap<>();
-
-        for (GraphQLDataFetcherType dataFetcher : this.dataFetchers.getDataFetchers()) {
-            typeMap.computeIfAbsent(dataFetcher.getTypeName(), k -> new HashSet<>());
-            typeMap.get(dataFetcher.getTypeName()).add(dataFetcher);
+    fun buildWiring(): RuntimeWiring.Builder {
+        val typeMap: MutableMap<String?, MutableSet<GraphQLDataFetcherType>> = HashMap()
+        for (dataFetcher in GraphQLDataFetcherBank.dataFetchers) {
+            typeMap.computeIfAbsent(dataFetcher.typeName) { HashSet() }
+            typeMap[dataFetcher.typeName]?.add(dataFetcher)
         }
-
-
-        RuntimeWiring.Builder builder = RuntimeWiring.newRuntimeWiring();
-
-        for (String typeName : typeMap.keySet()) {
-            TypeRuntimeWiring.Builder typeBuilder = TypeRuntimeWiring.newTypeWiring(typeName);
-
-            System.out.println(typeName);
-            for (GraphQLDataFetcherType dataFetcher : typeMap.get(typeName)) {
-                typeBuilder.dataFetcher(dataFetcher.getName(), dataFetcher.getDataFetcher());
-                System.out.println("-" + dataFetcher.getName());
+        val builder = RuntimeWiring.newRuntimeWiring()
+        for (typeName in typeMap.keys) {
+            val typeBuilder = TypeRuntimeWiring.newTypeWiring(typeName)
+            println(typeName)
+            for (dataFetcher in typeMap[typeName]!!) {
+                typeBuilder.dataFetcher(dataFetcher.name, dataFetcher.dataFetcher)
+                println("-" + dataFetcher.name)
             }
-
-            builder.type(typeBuilder);
+            builder.type(typeBuilder)
         }
-
-        for (GraphQLTypeResolverType resolver : this.typeResolvers.getTypeResolvers()) {
-            TypeRuntimeWiring.Builder typeResolverBuilder = TypeRuntimeWiring.newTypeWiring(resolver.getName());
-            typeResolverBuilder.typeResolver(resolver.getResolver());
-            builder.type(typeResolverBuilder);
+        for (resolver in GraphQLTypeResolverBank.typeResolvers) {
+            val typeResolverBuilder = TypeRuntimeWiring.newTypeWiring(resolver?.name)
+            typeResolverBuilder.typeResolver(resolver?.resolver)
+            builder.type(typeResolverBuilder)
         }
-
-
-        for (GraphQLScalarType scalar : this.scalars.getScalars()) {
-            builder.scalar(scalar.getScalar());
+        for (scalar in GraphQLScalarBank.scalars) {
+            builder.scalar(scalar?.scalar)
         }
-
-        for (GraphQLDirectiveType directive : this.directives.getDirectives()) {
-            builder.directive(directive.getName(), directive.getDirective());
+        for (directive in GraphQLDirectiveBank.directives) {
+            builder.directive(directive?.name, directive?.directive)
         }
+        return builder
+    }
 
+    companion object {
+        fun withOptions(basePackage: String?, clazzes: Set<Class<*>?>, fetcher: InstanceFetcher): WiringBuilder {
+            return WiringBuilder(basePackage, clazzes, fetcher)
+        }
+    }
 
-        return builder;
+    init {
+        GraphQLClassParser(basePackage, clazzes, fetcher).parseClasses()
     }
 }

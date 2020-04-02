@@ -1,8 +1,19 @@
+buildscript {
+    ext.kotlin_version = '1.3.71'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 plugins {
     id 'java'
 }
 
 apply plugin: 'maven'
+apply plugin: 'kotlin'
 
 group 'com.joshbeck'
 version '1.0'
@@ -14,6 +25,8 @@ repositories {
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.3.71"
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
     // GraphQL Java
@@ -24,4 +37,16 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.google.inject/guice
     compile group: 'com.google.inject', name: 'guice', version: '4.2.3'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }

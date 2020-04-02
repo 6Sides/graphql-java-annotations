@@ -1,47 +1,29 @@
-package schemabuilder.processor.pipelines.parsing.typeresolvers;
+package schemabuilder.processor.pipelines.parsing.typeresolvers
 
-import graphql.schema.TypeResolver;
-import java.util.Objects;
+import graphql.schema.TypeResolver
+import java.util.*
 
-public class GraphQLTypeResolverType {
+class GraphQLTypeResolverType(val name: String, val resolver: TypeResolver?) {
 
-    private String name;
-    private TypeResolver resolver;
-
-    public GraphQLTypeResolverType(String name, TypeResolver resolver) {
-        this.name = name;
-        this.resolver = resolver;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public TypeResolver getResolver() {
-        return resolver;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+    override fun equals(o: Any?): Boolean {
+        if (this === o) {
+            return true
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+        if (o == null || javaClass != o.javaClass) {
+            return false
         }
-        GraphQLTypeResolverType that = (GraphQLTypeResolverType) o;
-        return name.equals(that.name);
+        val that = o as GraphQLTypeResolverType
+        return name == that.name
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
+    override fun hashCode(): Int {
+        return Objects.hash(name)
     }
 
-    @Override
-    public String toString() {
+    override fun toString(): String {
         return "GraphQLTypeResolverType{" +
                 "name='" + name + '\'' +
-                '}';
+                '}'
     }
+
 }

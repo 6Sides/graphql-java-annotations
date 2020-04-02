@@ -1,12 +1,6 @@
-package schemabuilder.processor.exceptions;
+package schemabuilder.processor.exceptions
 
-public class InvalidSchemaException extends RuntimeException {
-
-    public InvalidSchemaException(String message) {
-        super(message);
-    }
-
-    public InvalidSchemaException() {
-        super();
-    }
+class InvalidSchemaException : RuntimeException {
+    constructor(message: String?) : super(message) {}
+    constructor() : super() {}
 }

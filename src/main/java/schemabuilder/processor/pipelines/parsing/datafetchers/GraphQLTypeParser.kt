@@ -1,50 +1,44 @@
-package schemabuilder.processor.pipelines.parsing.datafetchers;
+package schemabuilder.processor.pipelines.parsing.datafetchers
 
-import graphql.schema.DataFetcher;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import schemabuilder.annotations.graphql.GraphQLDataFetcher;
-import schemabuilder.annotations.graphql.GraphQLTypeConfiguration;
-import schemabuilder.processor.pipelines.parsing.GraphQLClassParserStrategy;
-import schemabuilder.processor.wiring.InstanceFetcher;
+import graphql.schema.DataFetcher
+import schemabuilder.annotations.graphql.GraphQLDataFetcher
+import schemabuilder.annotations.graphql.GraphQLTypeConfiguration
+import schemabuilder.processor.pipelines.parsing.GraphQLClassParserStrategy
+import schemabuilder.processor.wiring.InstanceFetcher
+import java.lang.reflect.InvocationTargetException
 
-public class GraphQLTypeParser implements GraphQLClassParserStrategy {
+class GraphQLTypeParser : GraphQLClassParserStrategy {
 
-    private GraphQLDataFetcherBank dataFetcherBank = GraphQLDataFetcherBank.getInstance();
+    override fun parse(clazz: Class<*>, fetcher: InstanceFetcher) {
+        val typeName: String = clazz.getAnnotation(GraphQLTypeConfiguration::class.java).value
 
-    @Override
-    public void parse(Class<?> clazz, InstanceFetcher fetcher) {
-        if (!clazz.isAnnotationPresent(GraphQLTypeConfiguration.class)) {
-            return;
-        }
-
-        String typeName = clazz.getAnnotation(GraphQLTypeConfiguration.class).value();
-        Object instance = fetcher.getInstance(clazz);
-
-
-        for (Method method : clazz.getDeclaredMethods()) {
-            GraphQLDataFetcher annotation = method.getAnnotation(GraphQLDataFetcher.class);
-            if(annotation == null || !method.getReturnType().equals(DataFetcher.class)) {
-                continue;
+        val instance = fetcher.getInstance(clazz)
+        for (method in clazz.declaredMethods) {
+            val annotation = method.getAnnotation(GraphQLDataFetcher::class.java)
+            if (annotation == null || method.returnType != DataFetcher::class.java) {
+                continue
             }
+            var fieldName: String
 
-            String fieldName;
-            if(annotation.value().equals("")) {
-                fieldName = method.getName();
+            fieldName = if (annotation.value == "") {
+                method.name
             } else {
-                fieldName = annotation.value();
+                annotation.value
             }
+            val cost: Int = annotation.cost
+            method.isAccessible = true
 
-            int cost = annotation.cost();
-
-            method.setAccessible(true);
             try {
-                DataFetcher inst = (DataFetcher<?>) method.invoke(instance);
-                DataFetcherCostMap.setCostFor(inst, cost);
-                dataFetcherBank.addDataFetcher(new GraphQLDataFetcherType(typeName, cost, fieldName, inst));
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                val inst = method.invoke(instance) as DataFetcher<*>
+                DataFetcherCostMap.setCostFor(inst, cost)
+                GraphQLDataFetcherBank.addDataFetcher(GraphQLDataFetcherType(typeName, cost, fieldName, inst))
+            } catch (e: IllegalAccessException) {
+                e.printStackTrace()
+            } catch (e: InvocationTargetException) {
+                e.printStackTrace()
             }
         }
     }
+
+    override fun shouldParse(clazz: Class<*>): Boolean = clazz.isAnnotationPresent(GraphQLTypeConfiguration::class.java)
 }

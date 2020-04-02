@@ -1,30 +1,11 @@
-package schemabuilder.processor.pipelines.parsing.typeresolvers;
+package schemabuilder.processor.pipelines.parsing.typeresolvers
 
-import java.util.HashSet;
-import java.util.Set;
+object GraphQLTypeResolverBank {
 
-public class GraphQLTypeResolverBank {
-
-    private static Set<GraphQLTypeResolverType> typeResolvers = new HashSet<>();
-
-
-    private static GraphQLTypeResolverBank instance = null;
-
-    public static GraphQLTypeResolverBank getInstance() {
-        if (instance == null) {
-            instance = new GraphQLTypeResolverBank();
-        }
-        return instance;
+    fun addTypeResolver(typeResolver: GraphQLTypeResolverType?) {
+        typeResolvers.add(typeResolver)
     }
 
-    private GraphQLTypeResolverBank() {}
+    val typeResolvers: MutableSet<GraphQLTypeResolverType?> = mutableSetOf()
 
-
-    public void addTypeResolver(GraphQLTypeResolverType typeResolver) {
-        typeResolvers.add(typeResolver);
-    }
-
-    public Set<GraphQLTypeResolverType> getTypeResolvers() {
-        return typeResolvers;
-    }
 }

@@ -1,85 +1,78 @@
-package schemabuilder.processor.schema;
+package schemabuilder.processor.schema
 
-import com.google.common.reflect.ClassPath;
-import com.google.common.reflect.ClassPath.ResourceInfo;
-import graphql.schema.idl.TypeDefinitionRegistry;
-import java.io.File;
-import java.io.IOException;
+import com.google.common.reflect.ClassPath
+import graphql.schema.idl.SchemaParser
+import graphql.schema.idl.TypeDefinitionRegistry
+import java.io.File
+import java.io.IOException
+import java.util.*
 
 /**
  * A class that parses a directory for graphql schema definition
- * files and creates a valid {@link TypeDefinitionRegistry}
+ * files and creates a valid [TypeDefinitionRegistry]
  */
-public class SchemaParser {
-
-    private static final String defaultSchemaFileExtension = "graphqls";
-
-    private final String directory;
-    private final String schemaFileExtension;
+class SchemaParser(private val directory: String, schemaFileExtension: String?) {
+    private val schemaFileExtension: String
 
     /**
      * Create a schema parser for the specified directory using
-     * the {@link SchemaParser#defaultSchemaFileExtension} value.
+     * the [SchemaParser.defaultSchemaFileExtension] value.
      *
      * @param directory The directory to check for .graphqls files. Note that the
-     *                  parser will only check for directories in the `resources` folder.
+     * parser will only check for directories in the `resources` folder.
      */
-    private SchemaParser(String directory) {
-        this(directory, defaultSchemaFileExtension);
-    }
-
-    /**
-     * Create a schema parser for the specified directory.
-     * @param directory The directory to check for .graphqls files. Note that the
-     *                  parser will only check for directories in the `resources` folder.
-     * @param schemaFileExtension The file type to look for. Only files ending in the provided
-     *                            extension will be merged into the schema. Note that the extension
-     *                            should not contain a "." E.g. "graphqls", "graphql", etc.
-     */
-    public SchemaParser(String directory, String schemaFileExtension) {
-        this.directory = directory;
-        this.schemaFileExtension = String.format(".%s", schemaFileExtension);
-    }
+    private constructor(directory: String) : this(directory, defaultSchemaFileExtension) {}
 
     /**
      * Creates the TypeDefinitionRegistry from the .graphqls files in the schema directory
      *
      * @return A TypeDefinitionRegistry object constructed from the valid graphql schema definition files
      */
-    public TypeDefinitionRegistry getRegistry() throws IOException {
-        TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry();
-
-        buildRegistryRecursively(typeRegistry, null);
-
-        return typeRegistry;
-    }
+    @get:Throws(IOException::class)
+    val registry: TypeDefinitionRegistry
+        get() {
+            val typeRegistry = TypeDefinitionRegistry()
+            buildRegistryRecursively(typeRegistry, null)
+            return typeRegistry
+        }
 
     /**
-     * Parses the specified directory and merges all valid file contents into the {@link TypeDefinitionRegistry}
+     * Parses the specified directory and merges all valid file contents into the [TypeDefinitionRegistry]
      *
      * @param registry The context to merge .graphqls file schemas into
      * @param directory The root directory to search through
      */
-    private void buildRegistryRecursively(TypeDefinitionRegistry registry, File directory)
-            throws IOException {
-
-        ClassPath cp = ClassPath.from(Thread.currentThread().getContextClassLoader());
-
-        for (ResourceInfo info : cp.getResources()) {
+    @Throws(IOException::class)
+    private fun buildRegistryRecursively(registry: TypeDefinitionRegistry, directory: File?) {
+        val cp = ClassPath.from(Thread.currentThread().contextClassLoader)
+        for (info in cp.resources) {
             try {
-                if (info.getResourceName().contains(this.schemaFileExtension)) {
-                    System.out.println(info.getResourceName());
-
-                    java.util.Scanner s = new java.util.Scanner(info.asByteSource().openBufferedStream()).useDelimiter("\\A");
-
-                    String fileContents = s.hasNext() ? s.next() : "";
-                    TypeDefinitionRegistry contents = new graphql.schema.idl.SchemaParser().parse(fileContents);
-
-                    registry.merge(contents);
+                if (info.resourceName.contains(schemaFileExtension)) {
+                    println(info.resourceName)
+                    val s = Scanner(info.asByteSource().openBufferedStream()).useDelimiter("\\A")
+                    val fileContents = if (s.hasNext()) s.next() else ""
+                    val contents = SchemaParser().parse(fileContents)
+                    registry.merge(contents)
                 }
-            } catch(Exception e) {
-                e.printStackTrace();
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
+    }
+
+    companion object {
+        private const val defaultSchemaFileExtension = "graphqls"
+    }
+
+    /**
+     * Create a schema parser for the specified directory.
+     * @param directory The directory to check for .graphqls files. Note that the
+     * parser will only check for directories in the `resources` folder.
+     * @param schemaFileExtension The file type to look for. Only files ending in the provided
+     * extension will be merged into the schema. Note that the extension
+     * should not contain a "." E.g. "graphqls", "graphql", etc.
+     */
+    init {
+        this.schemaFileExtension = String.format(".%s", schemaFileExtension)
     }
 }

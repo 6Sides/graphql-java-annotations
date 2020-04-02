@@ -1,20 +1,21 @@
-package schemabuilder.processor.wiring;
+package schemabuilder.processor.wiring
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.InvocationTargetException
 
-public class DefaultInstanceFetcher implements InstanceFetcher {
-
+class DefaultInstanceFetcher : InstanceFetcher {
     // TODO: Take appropriate action based on exception thrown
-    @Override
-    public Object getInstance(Class<?> clazz) {
+    override fun getInstance(clazz: Class<*>?): Any? {
         try {
-            Constructor<?> constructor = clazz.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            return constructor.newInstance();
-        } catch(IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
-            e.printStackTrace();
+            val constructor = clazz?.getDeclaredConstructor()
+            constructor?.isAccessible = true
+            return constructor?.newInstance()
+        } catch (e: InstantiationException) {
+            e.printStackTrace()
+        } catch (e: NoSuchMethodException) {
+            e.printStackTrace()
+        } catch (e: InvocationTargetException) {
+            e.printStackTrace()
         }
-        return null;
+        return null
     }
 }

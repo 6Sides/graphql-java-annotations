@@ -1,7 +1,6 @@
-package schemabuilder.processor.wiring;
+package schemabuilder.processor.wiring
 
-public interface InstanceFetcher {
-
+interface InstanceFetcher {
     /**
      * Returns an instance of the provided class. If using a dependency injection
      * framework use it to return the instance. E.g. if using Spring,
@@ -10,6 +9,5 @@ public interface InstanceFetcher {
      * @param clazz The class to create an instance of
      * @return An instance of the provided class
      */
-    Object getInstance(Class<?> clazz);
-
+    fun getInstance(clazz: Class<*>?): Any?
 }

@@ -1,38 +1,30 @@
-package schemabuilder.processor.pipelines.parsing.scalars;
+package schemabuilder.processor.pipelines.parsing.scalars
 
-import graphql.schema.GraphQLScalarType;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import schemabuilder.annotations.graphql.GraphQLScalar;
-import schemabuilder.annotations.graphql.GraphQLSchemaConfiguration;
-import schemabuilder.processor.pipelines.parsing.GraphQLClassParserStrategy;
-import schemabuilder.processor.wiring.InstanceFetcher;
+import schemabuilder.annotations.graphql.GraphQLScalar
+import schemabuilder.annotations.graphql.GraphQLSchemaConfiguration
+import schemabuilder.processor.pipelines.parsing.GraphQLClassParserStrategy
+import schemabuilder.processor.wiring.InstanceFetcher
+import java.lang.reflect.InvocationTargetException
 
-public class GraphQLScalarParser implements GraphQLClassParserStrategy {
-
-    private GraphQLScalarBank scalarBank = GraphQLScalarBank.getInstance();
-
-    @Override
-    public void parse(Class<?> clazz, InstanceFetcher fetcher) {
-        if (!clazz.isAnnotationPresent(GraphQLSchemaConfiguration.class)) {
-            return;
-        }
-
-        Object instance = fetcher.getInstance(clazz);
-
-        for (Method method : clazz.getDeclaredMethods()) {
-            GraphQLScalar annotation = method.getAnnotation(GraphQLScalar.class);
-            if(annotation == null || !method.getReturnType().equals(graphql.schema.GraphQLScalarType.class)) {
-                continue;
+class GraphQLScalarParser : GraphQLClassParserStrategy {
+    private val scalarBank: GraphQLScalarBank = GraphQLScalarBank
+    override fun parse(clazz: Class<*>, fetcher: InstanceFetcher) {
+        val instance = fetcher.getInstance(clazz)
+        for (method in clazz.declaredMethods) {
+            val annotation = method.getAnnotation(GraphQLScalar::class.java)
+            if (annotation == null || method.returnType != graphql.schema.GraphQLScalarType::class.java) {
+                continue
             }
-
-            method.setAccessible(true);
-
+            method.isAccessible = true
             try {
-                scalarBank.addScalar(new schemabuilder.processor.pipelines.parsing.scalars.GraphQLScalarType(annotation.value(), (GraphQLScalarType) method.invoke(instance)));
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
+                scalarBank.addScalar(GraphQLScalarType(annotation.value, method.invoke(instance) as graphql.schema.GraphQLScalarType))
+            } catch (e: InvocationTargetException) {
+                e.printStackTrace()
+            } catch (e: IllegalAccessException) {
+                e.printStackTrace()
             }
         }
     }
+
+    override fun shouldParse(clazz: Class<*>): Boolean = clazz.isAnnotationPresent(GraphQLSchemaConfiguration::class.java)
 }

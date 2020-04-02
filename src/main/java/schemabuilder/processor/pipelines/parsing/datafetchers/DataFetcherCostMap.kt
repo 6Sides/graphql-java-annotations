@@ -1,18 +1,17 @@
-package schemabuilder.processor.pipelines.parsing.datafetchers;
+package schemabuilder.processor.pipelines.parsing.datafetchers
 
-import graphql.schema.DataFetcher;
-import java.util.HashMap;
-import java.util.Map;
+import graphql.schema.DataFetcher
+import java.util.*
 
-public class DataFetcherCostMap {
-
-    private static final Map<DataFetcher, Integer> map = new HashMap<>();
-
-    public static int getCostFor(DataFetcher dataFetcher) {
-        return map.getOrDefault(dataFetcher, 0);
+object DataFetcherCostMap {
+    private val map: MutableMap<DataFetcher<*>, Int> = HashMap()
+    @kotlin.jvm.JvmStatic
+    fun getCostFor(dataFetcher: DataFetcher<*>?): Int {
+        return map.getOrDefault(dataFetcher, 0)
     }
 
-    public static void setCostFor(DataFetcher dataFetcher, int cost) {
-        map.put(dataFetcher, cost);
+    @kotlin.jvm.JvmStatic
+    fun setCostFor(dataFetcher: DataFetcher<*>, cost: Int) {
+        map[dataFetcher] = cost
     }
 }

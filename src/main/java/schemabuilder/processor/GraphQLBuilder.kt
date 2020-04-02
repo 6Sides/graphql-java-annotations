@@ -1,130 +1,114 @@
-package schemabuilder.processor;
+package schemabuilder.processor
 
-import graphql.GraphQL;
-import graphql.execution.instrumentation.ChainedInstrumentation;
-import graphql.execution.instrumentation.Instrumentation;
-import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
-import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentationOptions;
-import graphql.schema.GraphQLSchema;
-import graphql.schema.idl.RuntimeWiring;
-import graphql.schema.idl.SchemaGenerator;
-import graphql.schema.idl.TypeDefinitionRegistry;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import schemabuilder.annotations.documentation.Stable;
-import schemabuilder.processor.pipelines.building.WiringBuilder;
-import schemabuilder.processor.schema.SchemaParser;
-import schemabuilder.processor.wiring.DefaultInstanceFetcher;
-import schemabuilder.processor.wiring.InstanceFetcher;
+import graphql.GraphQL
+import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.instrumentation.Instrumentation
+import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation
+import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentationOptions
+import graphql.schema.idl.SchemaGenerator
+import schemabuilder.annotations.documentation.Stable
+import schemabuilder.processor.pipelines.building.WiringBuilder
+import schemabuilder.processor.schema.SchemaParser
+import schemabuilder.processor.wiring.DefaultInstanceFetcher
+import schemabuilder.processor.wiring.InstanceFetcher
+import java.io.IOException
+import java.util.*
 
 @Stable
-public final class GraphQLBuilder {
-
-    private static int maxQueryCost;
-
-    private final WiringBuilder builder;
-    private final SchemaParser schemaParser;
-    private final ChainedInstrumentation instrumentation;
-
-    private GraphQLBuilder(InstanceFetcher fetcher, Set<Class<?>> additionalClasses, String basePackageForClasses, String schemaFileExtension, ChainedInstrumentation instrumentation, int maxQueryCost) {
-        this.builder = WiringBuilder.withOptions(basePackageForClasses, additionalClasses, fetcher);
-        this.schemaParser = new SchemaParser("", schemaFileExtension);
-        this.instrumentation = instrumentation;
-
-        GraphQLBuilder.maxQueryCost = maxQueryCost;
-    }
-
-    public GraphQL generateGraphQL() throws IOException {
-        TypeDefinitionRegistry typeRegistry = schemaParser.getRegistry();
-        RuntimeWiring runtimeWiring = builder.buildWiring().build();
-
-        SchemaGenerator schemaGenerator = new SchemaGenerator();
-        GraphQLSchema schema = schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
-
+class GraphQLBuilder private constructor(fetcher: InstanceFetcher, additionalClasses: Set<Class<*>?>, basePackageForClasses: String?, schemaFileExtension: String, instrumentation: ChainedInstrumentation, maxQueryCost: Int) {
+    private val builder: WiringBuilder
+    private val schemaParser: SchemaParser
+    private val instrumentation: ChainedInstrumentation
+    @Throws(IOException::class)
+    fun generateGraphQL(): GraphQL {
+        val typeRegistry = schemaParser.registry
+        val runtimeWiring = builder.buildWiring().build()
+        val schemaGenerator = SchemaGenerator()
+        val schema = schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring)
         return GraphQL.newGraphQL(schema)
                 .instrumentation(instrumentation)
-                .build();
+                .build()
     }
 
-    public static Builder newGraphQLBuilder() {
-        return new Builder();
-    }
-
-    public static int getMaxQueryCost() {
-        return maxQueryCost;
-    }
-
-    public static class Builder {
-
-        private InstanceFetcher fetcher = new DefaultInstanceFetcher();
-
-        private Set<Class<?>> additionalClasses;
-        private String basePackageForClasses;
-        private String schemaFileExtension;
-        private ChainedInstrumentation instrumentation;
-
-        private Integer maxQueryCost = 100;
-
-
-        public Builder() {
-            this.additionalClasses = new HashSet<>();
-            this.basePackageForClasses = null;
-            this.schemaFileExtension = "graphqls";
-
-
-            List<Instrumentation> insts = new ArrayList<>();
-            insts.add(
-                    new DataLoaderDispatcherInstrumentation(
-                            DataLoaderDispatcherInstrumentationOptions.newOptions()
-                            .includeStatistics(true)
-                    )
-            );
-
-            this.instrumentation = new ChainedInstrumentation(insts);
+    class Builder {
+        private var fetcher: InstanceFetcher = DefaultInstanceFetcher()
+        private val additionalClasses: MutableSet<Class<*>?>
+        private var basePackageForClasses: String?
+        private var schemaFileExtension: String
+        private var instrumentation: ChainedInstrumentation
+        private var maxQueryCost = 100
+        fun setInstanceFetcher(injector: InstanceFetcher): Builder {
+            fetcher = injector
+            return this
         }
 
-        public Builder setInstanceFetcher(InstanceFetcher injector) {
-            this.fetcher = injector;
-            return this;
+        fun addClass(clazz: Class<*>?): Builder {
+            additionalClasses.add(clazz)
+            return this
         }
 
-        public Builder addClass(Class<?> clazz) {
-            this.additionalClasses.add(clazz);
-            return this;
+        fun setBasePackageForClasses(basePackage: String?): Builder {
+            basePackageForClasses = basePackage
+            return this
         }
 
-        public Builder setBasePackageForClasses(String basePackage) {
-            this.basePackageForClasses = basePackage;
-            return this;
+        fun setSchemaFileExtension(extension: String): Builder {
+            schemaFileExtension = extension
+            return this
         }
 
-        public Builder setSchemaFileExtension(String extension) {
-            this.schemaFileExtension = extension;
-            return this;
+        fun setInstrumentaiton(instrumentation: ChainedInstrumentation): Builder {
+            this.instrumentation = instrumentation
+            return this
         }
 
-        public Builder setInstrumentaiton(ChainedInstrumentation instrumentation) {
-            this.instrumentation = instrumentation;
-            return this;
+        fun setMaxQueryCost(maxQueryCost: Int): Builder {
+            this.maxQueryCost = maxQueryCost
+            return this
         }
 
-        public Builder setMaxQueryCost(int maxQueryCost) {
-            this.maxQueryCost = maxQueryCost;
-            return this;
-        }
-
-        public GraphQLBuilder build() {
-            return new GraphQLBuilder(
-                    this.fetcher,
-                    this.additionalClasses,
-                    this.basePackageForClasses,
-                    this.schemaFileExtension,
-                    this.instrumentation,
+        fun build(): GraphQLBuilder {
+            return GraphQLBuilder(
+                    fetcher,
+                    additionalClasses,
+                    basePackageForClasses,
+                    schemaFileExtension,
+                    instrumentation,
                     this.maxQueryCost
-            );
+            )
         }
+
+        init {
+            additionalClasses = HashSet()
+            basePackageForClasses = null
+            schemaFileExtension = "graphqls"
+            val insts: MutableList<Instrumentation> = ArrayList()
+            insts.add(
+                    DataLoaderDispatcherInstrumentation(
+                            DataLoaderDispatcherInstrumentationOptions.newOptions()
+                                    .includeStatistics(true)
+                    )
+            )
+            instrumentation = ChainedInstrumentation(insts)
+        }
+    }
+
+    companion object {
+        @kotlin.jvm.JvmStatic
+        var maxQueryCost = 0
+            private set
+
+        @kotlin.jvm.JvmStatic
+        fun newGraphQLBuilder(): Builder {
+            return Builder()
+        }
+
+    }
+
+    init {
+        builder = WiringBuilder.Companion.withOptions(basePackageForClasses, additionalClasses, fetcher)
+        schemaParser = SchemaParser("", schemaFileExtension)
+        this.instrumentation = instrumentation
+        Companion.maxQueryCost = maxQueryCost
     }
 }
