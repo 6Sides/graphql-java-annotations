@@ -21,8 +21,10 @@ object DataLoaderRepository {
     val dataLoaderRegistry: DataLoaderRegistry
         get() {
             val registry = DataLoaderRegistry()
-            batchLoaders.forEach { (name: String?, loader: BatchLoader<*, *>?) -> registry.register(name, DataLoader.newDataLoader(loader)) }
-            mappedBatchLoaders.forEach { (name: String?, loader: MappedBatchLoader<*, *>?) -> registry.register(name, DataLoader.newMappedDataLoader(loader)) }
+
+            batchLoaders.forEach { (name: String, loader: BatchLoader<*, *>) -> registry.register(name, DataLoader.newDataLoader(loader)) }
+            mappedBatchLoaders.forEach { (name: String, loader: MappedBatchLoader<*, *>) -> registry.register(name, DataLoader.newMappedDataLoader(loader)) }
+
             return registry
         }
 
