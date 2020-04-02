@@ -9,5 +9,5 @@ interface InstanceFetcher {
      * @param clazz The class to create an instance of
      * @return An instance of the provided class
      */
-    fun getInstance(clazz: Class<*>?): Any?
+    fun getInstance(clazz: Class<*>): Any
 }
