@@ -6,32 +6,29 @@ import java.io.IOException
 import java.util.*
 
 class PackageScanner(private val basePackage: String?) {
+
     /**
-     * Scans all classes accessible from the context class loader which belong to the given package and subpackages.
+     * Scans all classes accessible from the context class loader which
+     * belong to the given package and subpackages.
      *
      * @return The classes in the base package
      * @throws IOException
      */
     @get:Throws(IOException::class)
-    val classes: MutableList<Class<*>>
+    val classes: List<Class<*>>
         get() {
-            val classes = ArrayList<Class<*>>()
-            val cp = ClassPath.from(Thread.currentThread().contextClassLoader)
+            val classPath = ClassPath.from(Thread.currentThread().contextClassLoader)
             val scannedClasses: ImmutableSet<ClassPath.ClassInfo>
 
-            scannedClasses = if (basePackage == null || basePackage == "") {
-                cp.allClasses
+            scannedClasses = if (basePackage.isNullOrBlank()) {
+                classPath.allClasses
             } else {
-                cp.getTopLevelClassesRecursive(basePackage)
+                classPath.getTopLevelClassesRecursive(basePackage)
             }
 
-            for (info in scannedClasses) {
-                try {
-                    classes.add(info.load())
-                } catch (ignored: Throwable) {
-                }
+            return scannedClasses.map {
+                it.load()
             }
-            return classes
         }
 
 }
