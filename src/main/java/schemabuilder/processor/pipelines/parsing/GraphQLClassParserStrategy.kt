@@ -5,7 +5,7 @@ import kotlin.reflect.KClass
 
 interface GraphQLClassParserStrategy {
 
-    fun parse(clazz: Class<*>, fetcher: InstanceFetcher)
+    fun parse(clazz: KClass<*>, fetcher: InstanceFetcher)
 
     /**
      * Precondition logic to determine if the class should be passed

@@ -1,5 +1,7 @@
 package schemabuilder.processor.wiring
 
+import kotlin.reflect.KClass
+
 interface InstanceFetcher {
     /**
      * Returns an instance of the provided class. If using a dependency injection
@@ -9,5 +11,5 @@ interface InstanceFetcher {
      * @param clazz The class to create an instance of
      * @return An instance of the provided class
      */
-    fun <T> getInstance(clazz: Class<T>): T
+    fun <T : Any> getInstance(clazz: KClass<T>): T
 }

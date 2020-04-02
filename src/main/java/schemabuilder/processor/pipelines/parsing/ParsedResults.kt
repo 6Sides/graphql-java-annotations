@@ -5,6 +5,9 @@ import schemabuilder.processor.pipelines.parsing.directives.GraphQLDirectiveType
 import schemabuilder.processor.pipelines.parsing.scalars.GraphQLScalarType
 import schemabuilder.processor.pipelines.parsing.typeresolvers.GraphQLTypeResolverType
 
+/**
+ * Holds components of the graphql schema
+ */
 object ParsedResults {
 
     val datafetchers: MutableList<GraphQLDataFetcherType> = mutableListOf()

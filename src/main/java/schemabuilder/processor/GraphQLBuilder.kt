@@ -16,9 +16,12 @@ import java.util.*
 
 @Stable
 class GraphQLBuilder private constructor(fetcher: InstanceFetcher, additionalClasses: Set<Class<*>>, basePackageForClasses: String?, schemaFileExtension: String, instrumentation: ChainedInstrumentation, maxQueryCost: Int) {
-    private val builder: WiringBuilder
-    private val schemaParser: SchemaParser
+
+    private val builder: WiringBuilder = WiringBuilder.withOptions(basePackageForClasses, additionalClasses, fetcher)
+    private val schemaParser: SchemaParser = SchemaParser(schemaFileExtension)
+
     private val instrumentation: ChainedInstrumentation
+
     @Throws(IOException::class)
     fun generateGraphQL(): GraphQL {
         val typeRegistry = schemaParser.registry
@@ -107,8 +110,6 @@ class GraphQLBuilder private constructor(fetcher: InstanceFetcher, additionalCla
     }
 
     init {
-        builder = WiringBuilder.Companion.withOptions(basePackageForClasses, additionalClasses, fetcher)
-        schemaParser = SchemaParser(schemaFileExtension)
         this.instrumentation = instrumentation
         Companion.maxQueryCost = maxQueryCost
     }

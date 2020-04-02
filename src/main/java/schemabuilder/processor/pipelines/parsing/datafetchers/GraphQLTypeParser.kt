@@ -6,20 +6,21 @@ import schemabuilder.annotations.graphql.GraphQLTypeConfiguration
 import schemabuilder.processor.pipelines.parsing.GraphQLClassParserStrategy
 import schemabuilder.processor.pipelines.parsing.ParsedResults
 import schemabuilder.processor.wiring.InstanceFetcher
+import java.lang.Exception
 import kotlin.reflect.KClass
+import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.jvm.isAccessible
 
 class GraphQLTypeParser : GraphQLClassParserStrategy {
 
-    override fun parse(clazz: Class<*>, fetcher: InstanceFetcher) {
-        val typeName: String = clazz.getAnnotation(GraphQLTypeConfiguration::class.java).value
+    override fun parse(clazz: KClass<*>, fetcher: InstanceFetcher) {
+        val typeName: String = clazz.findAnnotation<GraphQLTypeConfiguration>()?.value!!
 
-        val instance = fetcher.getInstance(clazz)
-        for (method in clazz.declaredMethods) {
-            val annotation = method.getAnnotation(GraphQLDataFetcher::class.java)
-            if (annotation == null || method.returnType != DataFetcher::class.java) {
-                continue
-            }
+        for (method in clazz.declaredFunctions) {
+            val annotation = method.findAnnotation<GraphQLDataFetcher>()!!
+
             var fieldName: String
 
             fieldName = if (annotation.value == "") {
@@ -30,9 +31,11 @@ class GraphQLTypeParser : GraphQLClassParserStrategy {
             val cost: Int = annotation.cost
             method.isAccessible = true
 
-            val inst = method.invoke(instance) as DataFetcher<*>
-            DataFetcherCostMap.setCostFor(inst, cost)
-            ParsedResults.datafetchers.add(GraphQLDataFetcherType(typeName, cost, fieldName, inst))
+            try {
+                val inst = method.call(fetcher.getInstance(clazz)) as DataFetcher<*>
+                DataFetcherCostMap.setCostFor(inst, cost)
+                ParsedResults.datafetchers.add(GraphQLDataFetcherType(typeName, cost, fieldName, inst))
+            } catch (e: Exception) {e.printStackTrace()}
         }
     }
 

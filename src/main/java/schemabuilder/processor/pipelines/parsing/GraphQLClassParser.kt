@@ -32,7 +32,7 @@ class GraphQLClassParser @JvmOverloads constructor(
             strategies.filter {
                 it.shouldParse(clazz.kotlin)
             }.forEach {
-                it.parse(clazz, instanceFetcher)
+                it.parse(clazz.kotlin, instanceFetcher)
             }
         }
 

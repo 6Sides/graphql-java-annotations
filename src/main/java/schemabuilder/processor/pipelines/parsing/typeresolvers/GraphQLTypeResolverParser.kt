@@ -6,12 +6,13 @@ import schemabuilder.processor.pipelines.parsing.GraphQLClassParserStrategy
 import schemabuilder.processor.pipelines.parsing.ParsedResults
 import schemabuilder.processor.wiring.InstanceFetcher
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
 class GraphQLTypeResolverParser : GraphQLClassParserStrategy {
 
-    override fun parse(clazz: Class<*>, fetcher: InstanceFetcher) {
-        val typeName: String = clazz.getAnnotation(GraphQLTypeResolver::class.java).value
+    override fun parse(clazz: KClass<*>, fetcher: InstanceFetcher) {
+        val typeName: String = clazz.findAnnotation<GraphQLTypeResolver>()?.value!!
 
         val instance = fetcher.getInstance(clazz)
 
