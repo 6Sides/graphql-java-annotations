@@ -108,7 +108,7 @@ class GraphQLBuilder private constructor(fetcher: InstanceFetcher, additionalCla
 
     init {
         builder = WiringBuilder.Companion.withOptions(basePackageForClasses, additionalClasses, fetcher)
-        schemaParser = SchemaParser("", schemaFileExtension)
+        schemaParser = SchemaParser(schemaFileExtension)
         this.instrumentation = instrumentation
         Companion.maxQueryCost = maxQueryCost
     }
