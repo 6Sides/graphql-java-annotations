@@ -16,6 +16,7 @@ class WiringBuilder private constructor(basePackage: String?, clazzes: Set<Class
             typeMap.computeIfAbsent(dataFetcher.typeName) { HashSet() }
             typeMap[dataFetcher.typeName]?.add(dataFetcher)
         }
+
         val builder = RuntimeWiring.newRuntimeWiring()
         for (typeName in typeMap.keys) {
             val typeBuilder = TypeRuntimeWiring.newTypeWiring(typeName)
@@ -26,14 +27,17 @@ class WiringBuilder private constructor(basePackage: String?, clazzes: Set<Class
             }
             builder.type(typeBuilder)
         }
+
         for (resolver in ParsedResults.typeResolvers) {
             val typeResolverBuilder = TypeRuntimeWiring.newTypeWiring(resolver.name)
             typeResolverBuilder.typeResolver(resolver.resolver)
             builder.type(typeResolverBuilder)
         }
+
         for (scalar in ParsedResults.scalars) {
             builder.scalar(scalar.scalar)
         }
+
         for (directive in ParsedResults.directives) {
             builder.directive(directive.name, directive.directive)
         }

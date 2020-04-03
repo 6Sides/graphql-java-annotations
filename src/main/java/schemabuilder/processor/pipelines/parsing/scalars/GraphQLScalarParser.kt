@@ -13,13 +13,13 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.isAccessible
 
 class GraphQLScalarParser : GraphQLClassParserStrategy {
+
     override fun parse(clazz: KClass<*>, fetcher: InstanceFetcher) {
         for (method in clazz.declaredFunctions) {
             val annotation = method.findAnnotation<GraphQLScalar>()
 
             try {
                 method.isAccessible = true
-                //val inst = method.call() as? graphql.schema.GraphQLScalarType
                 ParsedResults.scalars.add(GraphQLScalarType(annotation?.value!!, method.call() as graphql.schema.GraphQLScalarType))
 
             } catch (e: Exception) {

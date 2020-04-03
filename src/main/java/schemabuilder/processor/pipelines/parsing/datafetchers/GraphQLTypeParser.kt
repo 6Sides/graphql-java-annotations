@@ -21,13 +21,12 @@ class GraphQLTypeParser : GraphQLClassParserStrategy {
         for (method in clazz.declaredFunctions) {
             val annotation = method.findAnnotation<GraphQLDataFetcher>()!!
 
-            var fieldName: String
-
-            fieldName = if (annotation.value == "") {
+            val fieldName = if (annotation.value == "") {
                 method.name
             } else {
                 annotation.value
             }
+
             val cost: Int = annotation.cost
             method.isAccessible = true
 
