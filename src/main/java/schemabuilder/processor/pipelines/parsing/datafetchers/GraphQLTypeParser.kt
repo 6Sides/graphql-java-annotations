@@ -32,9 +32,12 @@ class GraphQLTypeParser : GraphQLClassParserStrategy {
             method.isAccessible = true
 
             try {
-                val inst = method.call(fetcher.getInstance(clazz)) as DataFetcher<*>
-                DataFetcherCostMap.setCostFor(inst, cost)
-                ParsedResults.datafetchers.add(GraphQLDataFetcherType(typeName, cost, fieldName, inst))
+                val dataFetcherInstance = DataFetcher {
+                    environment -> method.call(fetcher.getInstance(clazz), environment!!)
+                }
+
+                DataFetcherCostMap.setCostFor(dataFetcherInstance, cost)
+                ParsedResults.datafetchers.add(GraphQLDataFetcherType(typeName, cost, fieldName, dataFetcherInstance))
             } catch (e: Exception) {e.printStackTrace()}
         }
     }
