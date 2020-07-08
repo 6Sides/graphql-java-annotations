@@ -50,6 +50,6 @@ class GraphQLClassParser @JvmOverloads constructor(
         println("Printing Batch Loaders")
         DataLoaderRepository.dataLoaderRegistry.dataLoaders.forEach(::println)
         println("Printing Batch Loaders")
-        ParsedResults.types.forEach { (k, v) -> println("$v: $k") }
+        ParsedResults.types.forEach { (k, v) -> println("$k: $v") }
     }
 }

@@ -8,7 +8,9 @@ import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentationOptions
 import graphql.schema.GraphQLSchema
+import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaGenerator
+import graphql.schema.idl.TypeDefinitionRegistry
 import schemabuilder.annotations.documentation.Stable
 import schemabuilder.processor.pipelines.building.WiringBuilder
 import schemabuilder.processor.pipelines.parsing.ParsedResults
@@ -41,10 +43,11 @@ class GraphQLBuilder private constructor(
         val typeRegistry = schemaParser.registry
         val runtimeWiring = builder.buildWiring().build()
         val schemaGenerator = SchemaGenerator()
-        var schema = schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring)
 
-        if (isFederated) {
-           schema = transformForFederation(schema)
+        val schema = if (isFederated) {
+            transformForFederation(typeRegistry, runtimeWiring)
+        } else {
+            schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring)
         }
 
         return GraphQL.newGraphQL(schema)
@@ -52,8 +55,8 @@ class GraphQLBuilder private constructor(
                 .build()
     }
 
-    private fun transformForFederation(schema: GraphQLSchema): GraphQLSchema {
-        return Federation.transform(schema).resolveEntityType { env ->
+    private fun transformForFederation(registry: TypeDefinitionRegistry, wiring: RuntimeWiring): GraphQLSchema {
+        return Federation.transform(registry, wiring).resolveEntityType { env ->
             ParsedResults.types.forEach { (clazz, data) ->
                 val t: Any = env.getObject()
                 if (t::class.starProjectedType.isSubtypeOf(clazz.starProjectedType)) {
