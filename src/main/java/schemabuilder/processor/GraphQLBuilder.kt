@@ -11,6 +11,7 @@ import graphql.schema.GraphQLSchema
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaGenerator
 import graphql.schema.idl.TypeDefinitionRegistry
+import graphql.schema.idl.TypeRuntimeWiring
 import schemabuilder.annotations.documentation.Stable
 import schemabuilder.processor.pipelines.building.WiringBuilder
 import schemabuilder.processor.pipelines.parsing.ParsedResults
@@ -41,10 +42,12 @@ class GraphQLBuilder private constructor(
     @Throws(IOException::class)
     fun generateGraphQL(): GraphQL {
         val typeRegistry = schemaParser.registry
+
         val runtimeWiring = builder.buildWiring().build()
         val schemaGenerator = SchemaGenerator()
 
         val schema = if (isFederated) {
+            println("Configuring Federation...")
             transformForFederation(typeRegistry, runtimeWiring)
         } else {
             schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring)
@@ -68,14 +71,7 @@ class GraphQLBuilder private constructor(
             env.getArgument<List<Map<String, Any>>>(_Entity.argumentName)
                 .stream()
                 .map { values ->
-                    if ("Product" == values["__typename"]) {
-                        val upc = values["upc"]
-                        if (upc is String) {
-                            return@map null
-                        }
-                    }
-
-                    ParsedResults.types.forEach { (clazz, data) ->
+                    ParsedResults.types.forEach { (_, data) ->
                         if (data.typename == values["__typename"]) {
                             val id = values[data.idField]
                             if (id is String) {
