@@ -3,6 +3,7 @@ package core.directives.auth;
 import com.google.inject.Inject;
 import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLFieldDefinition;
+import graphql.schema.GraphQLFieldsContainer;
 import graphql.schema.idl.SchemaDirectiveWiring;
 import graphql.schema.idl.SchemaDirectiveWiringEnvironment;
 import java.util.HashMap;
@@ -31,10 +32,12 @@ public class Authorization implements SchemaDirectiveWiring {
     @Override
     public GraphQLFieldDefinition onField(SchemaDirectiveWiringEnvironment<GraphQLFieldDefinition> schemaDirectiveWiringEnv) {
         String targetAuthRole = (String) schemaDirectiveWiringEnv.getDirective().getArgument("policy").getValue();
+
         GraphQLFieldDefinition field = schemaDirectiveWiringEnv.getElement();
+        GraphQLFieldsContainer parentType = schemaDirectiveWiringEnv.getFieldsContainer();
 
         // Build a data fetcher that first checks authorization roles before then calling the original data fetcher
-        DataFetcher originalDataFetcher = field.getDataFetcher();
+        DataFetcher originalDataFetcher = schemaDirectiveWiringEnv.getCodeRegistry().getDataFetcher(parentType, field);
 
         DataFetcher authDataFetcher = dataFetchingEnvironment -> {
             Object ctx = dataFetchingEnvironment.getContext();
@@ -53,6 +56,7 @@ public class Authorization implements SchemaDirectiveWiring {
         DataFetcherCostMap.setCostFor(authDataFetcher, DataFetcherCostMap.getCostFor(originalDataFetcher));
 
         // Now change the field definition to have the new authorizing data fetcher
-        return field.transform(builder -> builder.dataFetcher(authDataFetcher));
+        schemaDirectiveWiringEnv.getCodeRegistry().dataFetcher(parentType, field, authDataFetcher);
+        return field;
     }
 }
