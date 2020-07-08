@@ -8,10 +8,10 @@ import schemabuilder.processor.pipelines.parsing.datafetchers.GraphQLDataFetcher
 import schemabuilder.processor.wiring.InstanceFetcher
 import java.util.*
 
-class WiringBuilder private constructor(basePackage: String?, clazzes: Set<Class<*>>, fetcher: InstanceFetcher) {
+class WiringBuilder private constructor(basePackage: String, clazzes: Set<Class<*>>, fetcher: InstanceFetcher) {
 
     fun buildWiring(): RuntimeWiring.Builder {
-        val typeMap: MutableMap<String?, MutableSet<GraphQLDataFetcherType>> = HashMap()
+        val typeMap: MutableMap<String, MutableSet<GraphQLDataFetcherType>> = HashMap()
         for (dataFetcher in ParsedResults.datafetchers) {
             typeMap.computeIfAbsent(dataFetcher.typeName) { HashSet() }
             typeMap[dataFetcher.typeName]?.add(dataFetcher)
@@ -45,7 +45,7 @@ class WiringBuilder private constructor(basePackage: String?, clazzes: Set<Class
     }
 
     companion object {
-        fun withOptions(basePackage: String?, clazzes: Set<Class<*>>, fetcher: InstanceFetcher): WiringBuilder {
+        fun withOptions(basePackage: String, clazzes: Set<Class<*>>, fetcher: InstanceFetcher): WiringBuilder {
             return WiringBuilder(basePackage, clazzes, fetcher)
         }
     }

@@ -4,6 +4,7 @@ import schemabuilder.processor.pipelines.parsing.datafetchers.GraphQLTypeParser
 import schemabuilder.processor.pipelines.parsing.dataloaders.DataLoaderRepository
 import schemabuilder.processor.pipelines.parsing.dataloaders.GraphQLDataLoaderParser
 import schemabuilder.processor.pipelines.parsing.directives.GraphQLDirectiveParser
+import schemabuilder.processor.pipelines.parsing.federation.FederationParser
 import schemabuilder.processor.pipelines.parsing.scalars.GraphQLScalarParser
 import schemabuilder.processor.pipelines.parsing.typeresolvers.GraphQLTypeResolverParser
 import schemabuilder.processor.wiring.DefaultInstanceFetcher
@@ -22,7 +23,8 @@ class GraphQLClassParser @JvmOverloads constructor(
             GraphQLDirectiveParser(),
             GraphQLScalarParser(),
             GraphQLTypeResolverParser(),
-            GraphQLDataLoaderParser()
+            GraphQLDataLoaderParser(),
+            FederationParser()
     )
 
     fun parseClasses() {
@@ -47,5 +49,7 @@ class GraphQLClassParser @JvmOverloads constructor(
         ParsedResults.typeResolvers.forEach(::println)
         println("Printing Batch Loaders")
         DataLoaderRepository.dataLoaderRegistry.dataLoaders.forEach(::println)
+        println("Printing Batch Loaders")
+        ParsedResults.types.forEach { (k, v) -> println("$v: $k") }
     }
 }
