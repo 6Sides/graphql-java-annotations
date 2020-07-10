@@ -1,6 +1,8 @@
 package schemabuilder.processor
 
 import com.apollographql.federation.graphqljava.Federation
+import com.apollographql.federation.graphqljava.FederationDirectives
+import com.apollographql.federation.graphqljava.FederationSdlPrinter
 import com.apollographql.federation.graphqljava._Entity
 import graphql.GraphQL
 import graphql.execution.instrumentation.ChainedInstrumentation
@@ -51,6 +53,10 @@ class GraphQLBuilder private constructor(
             transformForFederation(typeRegistry, runtimeWiring)
         } else {
             schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring)
+        }
+
+        schema.allTypesAsList.forEach {
+            println(it)
         }
 
         return GraphQL.newGraphQL(schema)
