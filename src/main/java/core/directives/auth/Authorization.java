@@ -19,7 +19,7 @@ import schemabuilder.processor.pipelines.parsing.datafetchers.DataFetcherCostMap
  *
  * <T> The type of the context
  */
-//@GraphQLDirective("auth")
+@GraphQLDirective("auth")
 public class Authorization implements SchemaDirectiveWiring {
 
     private final PolicyCheckProvider provider;
