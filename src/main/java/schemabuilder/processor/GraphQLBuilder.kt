@@ -80,9 +80,7 @@ class GraphQLBuilder private constructor(
                     ParsedResults.types.forEach { (_, data) ->
                         if (data.typename == values["__typename"]) {
                             val id = values[data.idField]
-                            if (id is String) {
-                                return@map data.loader.load(id)
-                            }
+                            return@map data.loader.load(id!!)
                         }
                     }
 
