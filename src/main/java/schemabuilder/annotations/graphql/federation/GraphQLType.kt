@@ -10,6 +10,6 @@ annotation class GraphQLType(
     val loader: KClass<*>
 ) {}
 
-interface TypeLoader<T> {
-    fun load(id: String): T?
+interface TypeLoader<I, R> {
+    fun load(id: I): R?
 }

@@ -17,7 +17,7 @@ class FederationParser : GraphQLClassParserStrategy {
         ParsedResults.types[clazz] = FederationData(
                 anno.name,
                 anno.idField,
-                fetcher.getInstance(anno.loader) as TypeLoader<*>
+                fetcher.getInstance(anno.loader) as TypeLoader<*, *>
         )
     }
 
@@ -28,5 +28,5 @@ class FederationParser : GraphQLClassParserStrategy {
 data class FederationData(
     val typename: String,
     val idField: String,
-    val loader: TypeLoader<*>
+    val loader: TypeLoader<*, *>
 )
